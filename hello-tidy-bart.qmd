@@ -1,0 +1,108 @@
+---
+title: "Tidy methods for BART models using `{tidytreatment}`"
+author: "Joshua J Bon"
+institute: "CEREMADE, Université Paris-Dauphine"
+format:
+  revealjs: 
+    theme: sky
+editor: visual
+---
+
+## About me
+
+- **Statistician** Develop statistical algorithms
+
+- **Programmer** (Attempts) to write useful software
+
+- **Data scientist** Design/implement statistical analyses
+
+. . .
+
+- PhD/PostDoc at Queensland Uni of Technology
+- PostDoc at Paris-Dauphine PSL
+
+## Talk overview
+
+- ART: Additive Regression Tree
+- B: Bayesian statistics
+- Treatment effect models
+- `{tidytreatment}`
+
+# Additive regression trees
+
+## Trees
+
+{{< pdf figs/regression-tree-diagram.pdf height=350 width=900 >}}
+
+Binary tree example for two variables
+
+## Trees
+
+$$f(x_1,x_2) = \begin{cases}
+0.4, & x_1 > 1.25 \\
+0.1, & x_1 \leq 1.25, x_2<0.75\\
+0.6, & x_1 \leq 1.25, x_2 \geq 0.75\\
+\end{cases}$$
+
+## Trees
+
+$$f(x_1,x_2) = \begin{cases}
+\mu_1, & x_1 > c_1 \\
+\mu_2, & x_1 \leq c_1, x_2<c_2\\
+\mu_3, & x_1 \leq c_1, x_2 \geq c_2\\
+\end{cases}$$
+
+Parameters to estimate (fixed tree):
+- Terminal node mean values: $\mu_1, \mu_2, \mu_3$
+- Cut points: $c_1, c_2$
+
+## Trees
+
+$$f(x_1, x_2) = g(x_1, x_2; T, M)$$
+
+Parameters to estimate:
+- Terminal node mean values: $M = [\mu_1, \mu_2, \ldots, \mu_m]$
+- Tree structure: $T$ (cut points, layers)
+
+## Regression trees
+
+## Additive regression trees
+
+$$f(x_1, x_2) = \sum_{k=1}^{K}g(x_1, x_2; T_k, M_k)$$
+
+Parameters to estimate:
+- Terminal node mean values: $M_k$
+- Tree structure: $T_k$ (cut points, layers)
+
+# Bayesian statistics
+
+## Parameters and priors
+
+## Observed data and likelihoods
+
+## Bayes rule and inference
+
+# Treatment effect models
+
+## Causal modelling
+
+## Treatment effect BART
+
+## Bayesian causal forests
+
+# `{tidytreatment}`
+
+## Getting started
+
+## 
+
+# Thanks
+
+## Contact
+
+
+- [joshuajbon@gmail.com](mailto:joshuajbon@gmail.com)
+
+- <https://github.com/bonStats/tidytreatment>
+
+- [@bonStats](https://twitter.com/bonStats)
