@@ -30,6 +30,33 @@ editor: visual
 
 # Additive regression trees
 
+## Linear regression
+
+$$
+y = \beta \cdot x + \varepsilon
+$$
+
+$$
+\varepsilon \sim \text{N}(0,\sigma^2)
+$$
+When $p$ large, many variables and interaction to consider
+
+- How to do model selection?
+- What if relationship is not linear?
+
+
+## Nonlinear regression
+
+$$
+y = f(x; \beta)+ \varepsilon_i
+$$
+
+$$
+\varepsilon \sim \text{N}(0,\sigma^2)
+$$
+- What to choose for $f$?
+- Parsimonious and flexible 
+
 ## Trees
 
 {{< pdf figs/regression-tree-diagram.pdf height=350 width=900 >}}
@@ -38,7 +65,7 @@ Binary tree example for two variables
 
 ## Trees
 
-$$f(x_1,x_2) = \begin{cases}
+$$f(x) = \begin{cases}
 0.4, & x_1 > 1.25 \\
 0.1, & x_1 \leq 1.25, x_2<0.75\\
 0.6, & x_1 \leq 1.25, x_2 \geq 0.75\\
@@ -46,55 +73,107 @@ $$f(x_1,x_2) = \begin{cases}
 
 ## Trees
 
-$$f(x_1,x_2) = \begin{cases}
+$$f(x;\beta) = \begin{cases}
 \mu_1, & x_1 > c_1 \\
 \mu_2, & x_1 \leq c_1, x_2<c_2\\
 \mu_3, & x_1 \leq c_1, x_2 \geq c_2\\
 \end{cases}$$
 
-Parameters to estimate (fixed tree):
+Unknown parameters in $\beta$ (tree structure fixed):
 - Terminal node mean values: $\mu_1, \mu_2, \mu_3$
 - Cut points: $c_1, c_2$
 
 ## Trees
 
-$$f(x_1, x_2) = g(x_1, x_2; T, M)$$
+$$f(x; \beta) = g(x; T, M)$$
 
-Parameters to estimate:
+Unknown parameters in $\beta$:
 - Terminal node mean values: $M = [\mu_1, \mu_2, \ldots, \mu_m]$
 - Tree structure: $T$ (cut points, layers)
 
-## Regression trees
 
 ## Additive regression trees
 
-$$f(x_1, x_2) = \sum_{k=1}^{K}g(x_1, x_2; T_k, M_k)$$
+$$f(x; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k)$$
 
-Parameters to estimate:
+Unknown parameters in $\beta$:
 - Terminal node mean values: $M_k$
 - Tree structure: $T_k$ (cut points, layers)
+
+## Additive regression trees
+
+ mermaid diagram here
+
+## Practical choices
+
+- Shallow trees
+- Larger number of trees $K>100$
 
 # Bayesian statistics
 
 ## Parameters and priors
 
+- Parameters are random variables with unknown value
+- Represent uncertainty with probability distributions
+- The **prior** distribution is our uncertainty before observing the data
+
 ## Observed data and likelihoods
 
+- Observing data updates our prior distribution to the **posterior** distribution
+- Information about the parameters is encoded through the likelihood
+
 ## Bayes rule and inference
+
+$$
+p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
+$$
+- E.g. $\theta = [\beta, \sigma^2]$
+- Prior distribution $p(\theta)$
+- Likelihood $p(D ~\vert~ \theta) = L(\theta~\vert~D)$
+- Marginal likelihood $p(D)$
+- Posterior distribution $p(\theta ~\vert~ D)$
+
+## Computational inference
+
+The posterior is often intractable. Typically the marginal likelihood $p(D)$ is not available in closed form.
+
+Rely on Monte Carlo approximations using
+
+$$
+\theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ D)
+$$
+for $i = 1, 2, \ldots, N$ for large $N$. $\theta_i$ is generated using MCMC or SMC
 
 # Treatment effect models
 
 ## Causal modelling
 
+Assumptions:
+
+- Ignorability 
+- Positivity $0 < \text{P}(A=1~\vert~X) < 1$ for all $X$
+
 ## Treatment effect BART
 
+$$
+y = \sum_{k=1}^{K}g(x, z; T_k, M_k) + \varepsilon
+$$
+- $z = 1$ is treatment group
+
 ## Bayesian causal forests
+
+$$
+y = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^\prime, M_k^\prime) + \varepsilon
+$$
+
+- $z = 1$ is treatment group
+
 
 # `{tidytreatment}`
 
 ## Getting started
 
-## 
+## Example
 
 # Thanks
 

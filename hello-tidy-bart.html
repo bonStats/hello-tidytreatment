@@ -400,7 +400,7 @@ Joshua J Bon
 <section id="additive-regression-trees-1" class="slide level2">
 <h2>Additive regression trees</h2>
 <p><span class="math display">\[f(x_1, x_2) = \sum_{k=1}^{K}g(x_1, x_2; T_k, M_k)\]</span></p>
-<p>Parameters to estimate: - Terminal node mean values: <span class="math inline">\(M = [\mu_1, \mu_2, \ldots, \mu_m]\)</span> - Tree structure: <span class="math inline">\(T\)</span> (cut points, layers)</p>
+<p>Parameters to estimate: - Terminal node mean values: <span class="math inline">\(M_k\)</span> - Tree structure: <span class="math inline">\(T_k\)</span> (cut points, layers)</p>
 </section></section>
 <section>
 <section id="bayesian-statistics" class="title-slide slide level1 center">
@@ -409,12 +409,24 @@ Joshua J Bon
 </section>
 <section id="parameters-and-priors" class="slide level2">
 <h2>Parameters and priors</h2>
+<ul>
+<li>Parameters are random variables with unknown value</li>
+<li>Represent uncertainty with probability distributions</li>
+<li>The <strong>prior</strong> distribution is our uncertainty before observing the data</li>
+</ul>
 </section>
 <section id="observed-data-and-likelihoods" class="slide level2">
 <h2>Observed data and likelihoods</h2>
+<ul>
+<li>Observing data updates our prior distribution to the <strong>posterior</strong> distribution</li>
+<li>Information about the parameters is encoded through the likelihood</li>
+</ul>
 </section>
 <section id="bayes-rule-and-inference" class="slide level2">
 <h2>Bayes rule and inference</h2>
+<p><span class="math display">\[
+p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
+\]</span> - Prior distribution <span class="math inline">\(p(\theta)\)</span> - Likelihood <span class="math inline">\(p(D ~\vert~ \theta) = L(\theta~\vert~D)\)</span> - Marginal likelihood <span class="math inline">\(p(D)\)</span> - Posterior distribution <span class="math inline">\(p(\theta ~\vert~ D)\)</span></p>
 </section></section>
 <section>
 <section id="treatment-effect-models" class="title-slide slide level1 center">
