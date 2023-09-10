@@ -319,6 +319,9 @@
       margin-right: 0; 
     }
   </style>
+  <script src="hello-tidy-bart_files/libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="hello-tidy-bart_files/libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="hello-tidy-bart_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -367,40 +370,246 @@ Joshua J Bon
 <h1>Additive regression trees</h1>
 
 </section>
+<section id="linear-regression" class="slide level2">
+<h2>Linear regression</h2>
+
+<img data-src="hello-tidy-bart_files/figure-revealjs/linear-plot-1.png" width="960" class="r-stretch"></section>
+<section id="linear-regression-1" class="slide level2">
+<h2>Linear regression</h2>
+<p><span class="math display">\[
+y = \beta \cdot x + \varepsilon
+\]</span></p>
+<p><span class="math display">\[
+\varepsilon \sim \text{N}(0,\sigma^2)
+\]</span> When <span class="math inline">\(p\)</span> large, many variables and interaction to consider</p>
+<ul>
+<li>How to do model selection?</li>
+<li>What if relationship is not linear?</li>
+</ul>
+</section>
+<section id="nonlinear-regression" class="slide level2">
+<h2>Nonlinear regression</h2>
+<p><span class="math display">\[
+y = \color{blue}{f(x; \beta)} + \varepsilon_i
+\]</span></p>
+<p><span class="math display">\[
+\varepsilon \sim \text{N}(0,\sigma^2)
+\]</span></p>
+<ul>
+<li>What to choose for <span class="math inline">\(f\)</span>?</li>
+<li>Parsimonious and flexible</li>
+</ul>
+</section>
+<section id="what-about-binary-trees" class="slide level2">
+<h2>What about binary trees?</h2>
+<div class="cell" data-reveal="true">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">graph TB
+    A(( ))---B(( ))
+    A---C(( ))
+    B---D(( ))
+    B---E(( ))
+    C---F(( ))
+    C---G(( ))
+    D---H(( ))
+    D---I(( ))
+    E---J(( ))
+    E---K(( ))
+    F---L(( ))
+    F---M(( ))
+    G---N(( ))
+    G---O(( ))
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+<p><span class="math display">\[
+\color{blue}{f(x; \beta)} = \text{piecewise constant}
+\]</span></p>
+<p><span class="math display">\[
+\color{blue}{\beta} = \begin{cases}
+T, &amp; \text{Tree structure} \\
+M, &amp; \text{Terminal node values} \\
+\end{cases}
+\]</span></p>
+</section>
+<section id="trees-are-flexible" class="slide level2">
+<h2>Trees are flexible</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="hello-tidy-bart_files/figure-revealjs/pconstant-plot-1-1.png" width="960"></p>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="hello-tidy-bart_files/figure-revealjs/pconstant-tree-1-1.png" width="960"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="trees-are-flexible-1" class="slide level2">
+<h2>Trees are flexible</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="hello-tidy-bart_files/figure-revealjs/pconstant-plot-2-1.png" width="960"></p>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="hello-tidy-bart_files/figure-revealjs/pconstant-tree-2-1.png" width="960"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="trees-are-flexible-2" class="slide level2">
+<h2>Trees are flexible</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="hello-tidy-bart_files/figure-revealjs/pconstant-plot-3-1.png" width="960"></p>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="hello-tidy-bart_files/figure-revealjs/pconstant-tree-3-1.png" width="960"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="trees-are-flexible-3" class="slide level2">
+<h2>Trees are flexible</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="hello-tidy-bart_files/figure-revealjs/pconstant-plot-4-1.png" width="960"></p>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="hello-tidy-bart_files/figure-revealjs/pconstant-tree-4-1.png" width="960"></p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="trees-can-model-non-linear-interactions" class="slide level2">
+<h2>Trees can model (non-linear) interactions</h2>
+<p><object data="figs/regression-tree-diagram.pdf" type="application/pdf" width="900" height="350"><p>Unable to display PDF file. <a href="figs/regression-tree-diagram.pdf">Download</a> instead.</p></object></p>
+</section>
 <section id="trees" class="slide level2">
 <h2>Trees</h2>
-<p><object data="figs/regression-tree-diagram.pdf" type="application/pdf" width="900" height="350"><p>Unable to display PDF file. <a href="figs/regression-tree-diagram.pdf">Download</a> instead.</p></object></p>
-<p>Binary tree example for two variables</p>
+<p>More branches can result in</p>
+<ul>
+<li>Better approximation of smooth functions (same <span class="math inline">\(x_i\)</span>)</li>
+<li>More interaction effects (different <span class="math inline">\(x_i\)</span>)</li>
+</ul>
 </section>
 <section id="trees-1" class="slide level2">
 <h2>Trees</h2>
-<p><span class="math display">\[f(x_1,x_2) = \begin{cases}
-0.4, &amp; x_1 &gt; 1.25 \\
-0.1, &amp; x_1 \leq 1.25, x_2&lt;0.75\\
-0.6, &amp; x_1 \leq 1.25, x_2 \geq 0.75\\
-\end{cases}\]</span></p>
-</section>
-<section id="trees-2" class="slide level2">
-<h2>Trees</h2>
-<p><span class="math display">\[f(x_1,x_2) = \begin{cases}
-\mu_1, &amp; x_1 &gt; c_1 \\
-\mu_2, &amp; x_1 \leq c_1, x_2&lt;c_2\\
-\mu_3, &amp; x_1 \leq c_1, x_2 \geq c_2\\
-\end{cases}\]</span></p>
-<p>Parameters to estimate (fixed tree): - Terminal node mean values: <span class="math inline">\(\mu_1, \mu_2, \mu_3\)</span> - Cut points: <span class="math inline">\(c_1, c_2\)</span></p>
-</section>
-<section id="trees-3" class="slide level2">
-<h2>Trees</h2>
-<p><span class="math display">\[f(x_1, x_2) = g(x_1, x_2; T, M)\]</span></p>
-<p>Parameters to estimate: - Terminal node mean values: <span class="math inline">\(M = [\mu_1, \mu_2, \ldots, \mu_m]\)</span> - Tree structure: <span class="math inline">\(T\)</span> (cut points, layers)</p>
-</section>
-<section id="regression-trees" class="slide level2">
-<h2>Regression trees</h2>
+<p><span class="math display">\[f(x; \beta) = g(x; T, M)\]</span></p>
+<p>Unknown parameters in <span class="math inline">\(\beta\)</span>:</p>
+<ul>
+<li>Terminal node mean values: <span class="math inline">\(M = [\mu_1, \mu_2, \ldots, \mu_m]\)</span></li>
+<li>Tree structure: <span class="math inline">\(T\)</span> (cut points, layers)</li>
+</ul>
 </section>
 <section id="additive-regression-trees-1" class="slide level2">
 <h2>Additive regression trees</h2>
-<p><span class="math display">\[f(x_1, x_2) = \sum_{k=1}^{K}g(x_1, x_2; T_k, M_k)\]</span></p>
-<p>Parameters to estimate: - Terminal node mean values: <span class="math inline">\(M_k\)</span> - Tree structure: <span class="math inline">\(T_k\)</span> (cut points, layers)</p>
+<p><span class="math display">\[f(x; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k)\]</span></p>
+<p>Unknown parameters in <span class="math inline">\(\beta\)</span>:</p>
+<ul>
+<li>Terminal node mean values: <span class="math inline">\(M_k\)</span></li>
+<li>Tree structure: <span class="math inline">\(T_k\)</span> (cut points, layers)</li>
+</ul>
+</section>
+<section id="additive-regression-trees-2" class="slide level2">
+<h2>Additive regression trees</h2>
+<div class="columns">
+<div class="column" style="width:14%;">
+<p><span class="math display">\[\color{blue}{f(x;\beta)} =\]</span></p>
+</div><div class="column" style="width:18%;">
+<div class="cell" data-reveal="true">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">graph TB
+    A(( ))---B(( ))
+    A---C(( ))
+    B---D(( ))
+    B---E(( ))
+    C---F(( ))
+    C---G(( ))
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:8%;">
+<p><span class="math display">\[+\]</span></p>
+</div><div class="column" style="width:18%;">
+<div class="cell" data-reveal="true">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">graph TB
+    J(( ))---K(( ))
+    J---L(( ))
+    L---M(( ))
+    L---N(( ))
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:8%;">
+<p><span class="math display">\[+\]</span></p>
+</div><div class="column" style="width:8%;">
+<p><span class="math display">\[\cdots\]</span></p>
+</div><div class="column" style="width:8%;">
+<p><span class="math display">\[+\]</span></p>
+</div><div class="column" style="width:18%;">
+<div class="cell" data-reveal="true">
+<div class="cell-output-display">
+<div>
+<div>
+<pre class="mermaid mermaid-js">graph TB
+    A(( ))---B(( ))
+    A---C(( ))
+    C---F(( ))
+    C---G(( ))
+    G---H(( ))
+    G---I(( ))
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="practical-choices" class="slide level2">
+<h2>Practical choices</h2>
+<ul>
+<li>Shallow trees</li>
+<li>Larger number of trees <span class="math inline">\(K&gt;100\)</span></li>
+</ul>
 </section></section>
 <section>
 <section id="bayesian-statistics" class="title-slide slide level1 center">
@@ -426,7 +635,22 @@ Joshua J Bon
 <h2>Bayes rule and inference</h2>
 <p><span class="math display">\[
 p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
-\]</span> - Prior distribution <span class="math inline">\(p(\theta)\)</span> - Likelihood <span class="math inline">\(p(D ~\vert~ \theta) = L(\theta~\vert~D)\)</span> - Marginal likelihood <span class="math inline">\(p(D)\)</span> - Posterior distribution <span class="math inline">\(p(\theta ~\vert~ D)\)</span></p>
+\]</span></p>
+<ul>
+<li>E.g. <span class="math inline">\(\theta = [\beta, \sigma^2]\)</span></li>
+<li>Prior distribution <span class="math inline">\(p(\theta)\)</span></li>
+<li>Likelihood <span class="math inline">\(p(D ~\vert~ \theta) = L(\theta~\vert~D)\)</span></li>
+<li>Marginal likelihood <span class="math inline">\(p(D)\)</span></li>
+<li>Posterior distribution <span class="math inline">\(p(\theta ~\vert~ D)\)</span></li>
+</ul>
+</section>
+<section id="computational-inference" class="slide level2">
+<h2>Computational inference</h2>
+<p>The posterior is often intractable. Typically the marginal likelihood <span class="math inline">\(p(D)\)</span> is not available in closed form.</p>
+<p>Rely on Monte Carlo approximations using</p>
+<p><span class="math display">\[
+\theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ D)
+\]</span> for <span class="math inline">\(i = 1, 2, \ldots, N\)</span> for large <span class="math inline">\(N\)</span>. <span class="math inline">\(\theta_i\)</span> is generated using MCMC or SMC</p>
 </section></section>
 <section>
 <section id="treatment-effect-models" class="title-slide slide level1 center">
@@ -435,12 +659,29 @@ p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
 </section>
 <section id="causal-modelling" class="slide level2">
 <h2>Causal modelling</h2>
+<p>Assumptions:</p>
+<ul>
+<li>Ignorability</li>
+<li>Positivity <span class="math inline">\(0 &lt; \text{P}(A=1~\vert~X) &lt; 1\)</span> for all <span class="math inline">\(X\)</span></li>
+</ul>
 </section>
 <section id="treatment-effect-bart" class="slide level2">
 <h2>Treatment effect BART</h2>
+<p><span class="math display">\[
+y = \sum_{k=1}^{K}g(x, z; T_k, M_k) + \varepsilon
+\]</span></p>
+<ul>
+<li><span class="math inline">\(z = 1\)</span> is treatment group</li>
+</ul>
 </section>
 <section id="bayesian-causal-forests" class="slide level2">
 <h2>Bayesian causal forests</h2>
+<p><span class="math display">\[
+y = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^\prime, M_k^\prime) + \varepsilon
+\]</span></p>
+<ul>
+<li><span class="math inline">\(z = 1\)</span> is treatment group</li>
+</ul>
 </section></section>
 <section>
 <section id="tidytreatment" class="title-slide slide level1 center">
@@ -450,8 +691,8 @@ p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
 <section id="getting-started" class="slide level2">
 <h2>Getting started</h2>
 </section>
-<section id="section" class="slide level2">
-<h2></h2>
+<section id="example" class="slide level2">
+<h2>Example</h2>
 </section></section>
 <section>
 <section id="thanks" class="title-slide slide level1 center">
@@ -680,6 +921,44 @@ p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
     window.document.addEventListener("DOMContentLoaded", function (event) {
       const toggleBodyColorMode = (bsSheetEl) => {

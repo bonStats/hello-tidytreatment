@@ -4,7 +4,7 @@ author: "Joshua J Bon"
 institute: "CEREMADE, Université Paris-Dauphine"
 format:
   revealjs: 
-    theme: sky
+    theme: default
 editor: visual
 ---
 
@@ -32,6 +32,31 @@ editor: visual
 
 ## Linear regression
 
+```{r reg-setup}
+library(ggplot2)
+library(dplyr)
+library(rpart)
+library(rpart.plot)
+set.seed(101)
+x <- runif(30)
+y <- x^2 + rnorm(length(x), sd = 0.1)
+x <- x*100
+y <- y*100
+xydata <- tibble(x=x,y=y)
+```
+
+```{r linear-plot}
+
+ggplot(xydata, aes(x=x,y=y)) +
+  geom_point() + 
+  geom_smooth(method = lm, se = FALSE) +
+  theme_bw()
+
+```
+
+
+## Linear regression
+
 $$
 y = \beta \cdot x + \varepsilon
 $$
@@ -48,46 +73,227 @@ When $p$ large, many variables and interaction to consider
 ## Nonlinear regression
 
 $$
-y = f(x; \beta)+ \varepsilon_i
+y = \color{blue}{f(x; \beta)} + \varepsilon_i
 $$
 
 $$
 \varepsilon \sim \text{N}(0,\sigma^2)
 $$
-- What to choose for $f$?
-- Parsimonious and flexible 
 
-## Trees
+- What to choose for $f$?
+- Parsimonious and flexible
+
+## What about binary trees?
+
+```{mermaid}
+
+graph TB
+    A(( ))---B(( ))
+    A---C(( ))
+    B---D(( ))
+    B---E(( ))
+    C---F(( ))
+    C---G(( ))
+    D---H(( ))
+    D---I(( ))
+    E---J(( ))
+    E---K(( ))
+    F---L(( ))
+    F---M(( ))
+    G---N(( ))
+    G---O(( ))
+
+```
+
+$$
+\color{blue}{f(x; \beta)} = \text{piecewise constant}
+$$
+
+$$
+\color{blue}{\beta} = \begin{cases}
+T, & \text{Tree structure} \\
+M, & \text{Terminal node values} \\
+\end{cases}
+$$
+
+## Trees are flexible
+
+```{r tree-plot-setup}
+
+minvals <- c(30, 15, 10, 2)
+
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r pconstant-plot-1}
+
+ggplot(xydata, aes(x=x,y=y)) +
+  geom_point() + 
+  geom_smooth(method = rpart, se = FALSE, 
+              method.args = list(
+                control = rpart.control(
+                  minsplit = minvals[1],
+                  minbucket = minvals[1]))) +
+  theme_bw()
+
+```
+
+
+:::
+
+::: {.column width="50%"}
+
+```{r pconstant-tree-1}
+
+model1 <- rpart(y ~ x, data=xydata, 
+                     control = rpart.control(
+                  minsplit = minvals[1],
+                  minbucket = minvals[1]))
+
+rpart.plot(model1)
+
+```
+
+:::
+
+::::
+
+## Trees are flexible
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r pconstant-plot-2}
+
+ggplot(xydata, aes(x=x,y=y)) +
+  geom_point() + 
+  geom_smooth(method = rpart, se = FALSE, 
+              method.args = list(
+                control = rpart.control(
+                  minsplit = minvals[2],
+                  minbucket = minvals[2]))) +
+  theme_bw()
+
+```
+
+
+
+:::
+
+::: {.column width="50%"}
+
+```{r pconstant-tree-2}
+
+model2 <- rpart(y ~ x, data=xydata, 
+                     control = rpart.control(
+                  minsplit = minvals[2],
+                  minbucket = minvals[2]))
+
+rpart.plot(model2)
+
+```
+
+:::
+
+::::
+
+## Trees are flexible
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r pconstant-plot-3}
+
+ggplot(xydata, aes(x=x,y=y)) +
+  geom_point() + 
+  geom_smooth(method = rpart, se = FALSE, 
+              method.args = list(
+                control = rpart.control(
+                  minsplit = minvals[3],
+                  minbucket = minvals[3]))) +
+  theme_bw()
+
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r pconstant-tree-3}
+
+model3 <- rpart(y ~ x, data=xydata, 
+                     control = rpart.control(
+                  minsplit = minvals[3],
+                  minbucket = minvals[3]))
+
+rpart.plot(model3)
+
+```
+
+:::
+
+::::
+
+## Trees are flexible
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r pconstant-plot-4}
+
+ggplot(xydata, aes(x=x,y=y)) +
+  geom_point() + 
+  geom_smooth(method = rpart, se = FALSE, 
+              method.args = list(
+                control = rpart.control(
+                  minsplit = minvals[4],
+                  minbucket = minvals[4]))) +
+  theme_bw()
+
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r pconstant-tree-4}
+
+model4 <- rpart(y ~ x, data=xydata, 
+                     control = rpart.control(
+                  minsplit = minvals[4],
+                  minbucket = minvals[4]))
+
+rpart.plot(model4)
+
+```
+
+:::
+
+::::
+
+## Trees can model (non-linear) interactions
 
 {{< pdf figs/regression-tree-diagram.pdf height=350 width=900 >}}
 
-Binary tree example for two variables
-
 ## Trees
 
-$$f(x) = \begin{cases}
-0.4, & x_1 > 1.25 \\
-0.1, & x_1 \leq 1.25, x_2<0.75\\
-0.6, & x_1 \leq 1.25, x_2 \geq 0.75\\
-\end{cases}$$
+More branches can result in
 
-## Trees
-
-$$f(x;\beta) = \begin{cases}
-\mu_1, & x_1 > c_1 \\
-\mu_2, & x_1 \leq c_1, x_2<c_2\\
-\mu_3, & x_1 \leq c_1, x_2 \geq c_2\\
-\end{cases}$$
-
-Unknown parameters in $\beta$ (tree structure fixed):
-- Terminal node mean values: $\mu_1, \mu_2, \mu_3$
-- Cut points: $c_1, c_2$
+- Better approximation of smooth functions (same $x_i$)
+- More interaction effects (different $x_i$)
 
 ## Trees
 
 $$f(x; \beta) = g(x; T, M)$$
 
 Unknown parameters in $\beta$:
+
 - Terminal node mean values: $M = [\mu_1, \mu_2, \ldots, \mu_m]$
 - Tree structure: $T$ (cut points, layers)
 
@@ -97,12 +303,77 @@ Unknown parameters in $\beta$:
 $$f(x; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k)$$
 
 Unknown parameters in $\beta$:
+
 - Terminal node mean values: $M_k$
 - Tree structure: $T_k$ (cut points, layers)
 
 ## Additive regression trees
 
- mermaid diagram here
+:::: {.columns}
+
+::: {.column width="14%"}
+
+$$\color{blue}{f(x;\beta)} =$$
+
+:::
+
+::: {.column width="18%"}
+```{mermaid g1}
+graph TB
+    A(( ))---B(( ))
+    A---C(( ))
+    B---D(( ))
+    B---E(( ))
+    C---F(( ))
+    C---G(( ))
+```
+:::
+
+::: {.column width="8%"}
+
+$$+$$
+:::
+
+::: {.column width="18%"}
+```{mermaid g2}
+graph TB
+    J(( ))---K(( ))
+    J---L(( ))
+    L---M(( ))
+    L---N(( ))
+```
+:::
+
+::: {.column width="8%"}
+
+$$+$$
+:::
+
+::: {.column width="8%"}
+
+$$\cdots$$
+:::
+
+::: {.column width="8%"}
+
+$$+$$
+
+:::
+
+::: {.column width="18%"}
+```{mermaid g3}
+graph TB
+    A(( ))---B(( ))
+    A---C(( ))
+    C---F(( ))
+    C---G(( ))
+    G---H(( ))
+    G---I(( ))
+```
+:::
+
+::::
+
 
 ## Practical choices
 
@@ -127,6 +398,7 @@ Unknown parameters in $\beta$:
 $$
 p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
 $$
+
 - E.g. $\theta = [\beta, \sigma^2]$
 - Prior distribution $p(\theta)$
 - Likelihood $p(D ~\vert~ \theta) = L(\theta~\vert~D)$
@@ -158,6 +430,7 @@ Assumptions:
 $$
 y = \sum_{k=1}^{K}g(x, z; T_k, M_k) + \varepsilon
 $$
+
 - $z = 1$ is treatment group
 
 ## Bayesian causal forests
