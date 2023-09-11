@@ -5,6 +5,7 @@ institute: "CEREMADE, Université Paris-Dauphine"
 format:
   revealjs: 
     theme: default
+    df-print: paged
 editor: visual
 ---
 
@@ -12,13 +13,13 @@ editor: visual
 
 - **Statistician** Develop statistical algorithms
 
-- **Programmer** (Attempts) to write useful software
+- **Programmer** (Attempt) to write useful software
 
 - **Data scientist** Design/implement statistical analyses
 
 . . .
 
-- PhD/PostDoc at Queensland Uni of Technology
+- PhD and PostDoc at QUT, Brisbane
 - PostDoc at Paris-Dauphine PSL
 
 ## Talk overview
@@ -30,7 +31,7 @@ editor: visual
 
 # Additive regression trees
 
-## Linear regression
+## Regression models
 
 ```{r reg-setup}
 library(ggplot2)
@@ -58,7 +59,7 @@ ggplot(xydata, aes(x=x,y=y)) +
 ## Linear regression
 
 $$
-y = \beta \cdot x + \varepsilon
+Y = \beta \cdot X + \varepsilon
 $$
 
 $$
@@ -73,7 +74,7 @@ When $p$ large, many variables and interaction to consider
 ## Nonlinear regression
 
 $$
-y = \color{blue}{f(x; \beta)} + \varepsilon_i
+Y = \color{blue}{f(X; \beta)} + \varepsilon_i
 $$
 
 $$
@@ -88,20 +89,20 @@ $$
 ```{mermaid}
 
 graph TB
-    A(( ))---B(( ))
-    A---C(( ))
-    B---D(( ))
-    B---E(( ))
-    C---F(( ))
-    C---G(( ))
-    D---H(( ))
-    D---I(( ))
-    E---J(( ))
-    E---K(( ))
-    F---L(( ))
-    F---M(( ))
-    G---N(( ))
-    G---O(( ))
+    A("R₁")---B("R₂")
+    A---C("R₃")
+    B---D("R₄")
+    B---E("R₅")
+    C---F("R₆")
+    C---G("R₇")
+    D---H("m₁")
+    D---I("m₂")
+    E---J("m₃")
+    E---K("m₄")
+    F---L("m₅")
+    F---M("m₆")
+    G---N("m₇")
+    G---O("m₈")
 
 ```
 
@@ -129,7 +130,8 @@ minvals <- c(30, 15, 10, 2)
 ::: {.column width="50%"}
 
 ```{r pconstant-plot-1}
-
+#| fig-width: 10
+#| fig-height: 8
 ggplot(xydata, aes(x=x,y=y)) +
   geom_point() + 
   geom_smooth(method = rpart, se = FALSE, 
@@ -137,7 +139,7 @@ ggplot(xydata, aes(x=x,y=y)) +
                 control = rpart.control(
                   minsplit = minvals[1],
                   minbucket = minvals[1]))) +
-  theme_bw()
+  theme_bw(base_size = 20)
 
 ```
 
@@ -147,13 +149,14 @@ ggplot(xydata, aes(x=x,y=y)) +
 ::: {.column width="50%"}
 
 ```{r pconstant-tree-1}
-
+#| fig-width: 10
+#| fig-height: 8
 model1 <- rpart(y ~ x, data=xydata, 
                      control = rpart.control(
                   minsplit = minvals[1],
                   minbucket = minvals[1]))
 
-rpart.plot(model1)
+rpart.plot(model1, cex = 1.75)
 
 ```
 
@@ -168,7 +171,8 @@ rpart.plot(model1)
 ::: {.column width="50%"}
 
 ```{r pconstant-plot-2}
-
+#| fig-width: 10
+#| fig-height: 8
 ggplot(xydata, aes(x=x,y=y)) +
   geom_point() + 
   geom_smooth(method = rpart, se = FALSE, 
@@ -176,7 +180,8 @@ ggplot(xydata, aes(x=x,y=y)) +
                 control = rpart.control(
                   minsplit = minvals[2],
                   minbucket = minvals[2]))) +
-  theme_bw()
+  theme_bw() +
+  theme_bw(base_size = 20)
 
 ```
 
@@ -187,13 +192,14 @@ ggplot(xydata, aes(x=x,y=y)) +
 ::: {.column width="50%"}
 
 ```{r pconstant-tree-2}
-
+#| fig-width: 10
+#| fig-height: 8
 model2 <- rpart(y ~ x, data=xydata, 
                      control = rpart.control(
                   minsplit = minvals[2],
                   minbucket = minvals[2]))
 
-rpart.plot(model2)
+rpart.plot(model2, cex = 1.75)
 
 ```
 
@@ -208,7 +214,8 @@ rpart.plot(model2)
 ::: {.column width="50%"}
 
 ```{r pconstant-plot-3}
-
+#| fig-width: 10
+#| fig-height: 8
 ggplot(xydata, aes(x=x,y=y)) +
   geom_point() + 
   geom_smooth(method = rpart, se = FALSE, 
@@ -216,7 +223,8 @@ ggplot(xydata, aes(x=x,y=y)) +
                 control = rpart.control(
                   minsplit = minvals[3],
                   minbucket = minvals[3]))) +
-  theme_bw()
+  theme_bw() +
+  theme_bw(base_size = 20)
 
 ```
 
@@ -225,13 +233,14 @@ ggplot(xydata, aes(x=x,y=y)) +
 ::: {.column width="50%"}
 
 ```{r pconstant-tree-3}
-
+#| fig-width: 10
+#| fig-height: 8
 model3 <- rpart(y ~ x, data=xydata, 
                      control = rpart.control(
                   minsplit = minvals[3],
                   minbucket = minvals[3]))
 
-rpart.plot(model3)
+rpart.plot(model3, cex = 1.75)
 
 ```
 
@@ -246,7 +255,8 @@ rpart.plot(model3)
 ::: {.column width="50%"}
 
 ```{r pconstant-plot-4}
-
+#| fig-width: 10
+#| fig-height: 8
 ggplot(xydata, aes(x=x,y=y)) +
   geom_point() + 
   geom_smooth(method = rpart, se = FALSE, 
@@ -254,7 +264,8 @@ ggplot(xydata, aes(x=x,y=y)) +
                 control = rpart.control(
                   minsplit = minvals[4],
                   minbucket = minvals[4]))) +
-  theme_bw()
+  theme_bw() +
+  theme_bw(base_size = 20)
 
 ```
 
@@ -263,13 +274,14 @@ ggplot(xydata, aes(x=x,y=y)) +
 ::: {.column width="50%"}
 
 ```{r pconstant-tree-4}
-
+#| fig-width: 10
+#| fig-height: 8
 model4 <- rpart(y ~ x, data=xydata, 
                      control = rpart.control(
                   minsplit = minvals[4],
                   minbucket = minvals[4]))
 
-rpart.plot(model4)
+rpart.plot(model4, cex = 1.75)
 
 ```
 
@@ -277,7 +289,7 @@ rpart.plot(model4)
 
 ::::
 
-## Trees can model (non-linear) interactions
+## Trees have interactions
 
 {{< pdf figs/regression-tree-diagram.pdf height=350 width=900 >}}
 
@@ -288,24 +300,12 @@ More branches can result in
 - Better approximation of smooth functions (same $x_i$)
 - More interaction effects (different $x_i$)
 
-## Trees
+Empirically, the sum of many shallow trees is better
 
-$$f(x; \beta) = g(x; T, M)$$
+- Each tree captures a different aspect of variation
+- Helps to prevent overfitting
+- Select which variables to include
 
-Unknown parameters in $\beta$:
-
-- Terminal node mean values: $M = [\mu_1, \mu_2, \ldots, \mu_m]$
-- Tree structure: $T$ (cut points, layers)
-
-
-## Additive regression trees
-
-$$f(x; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k)$$
-
-Unknown parameters in $\beta$:
-
-- Terminal node mean values: $M_k$
-- Tree structure: $T_k$ (cut points, layers)
 
 ## Additive regression trees
 
@@ -374,21 +374,43 @@ graph TB
 
 ::::
 
+## Additive regression trees
 
-## Practical choices
-
-- Shallow trees
-- Larger number of trees $K>100$
+$$f(x; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k)$$
 
 # Bayesian statistics
 
 ## Parameters and priors
 
-- Parameters are random variables with unknown value
+```{r prior-dist}
+
+ggplot() + 
+  geom_function(fun = dnorm, args = list(mean = 1, sd = 0.5), xlim = c(-2,4)) +
+  scale_y_continuous("", labels = NULL) +
+  scale_x_continuous(expression(beta)) +
+  theme_bw()
+
+```
+
+- Parameters are random variables
 - Represent uncertainty with probability distributions
-- The **prior** distribution is our uncertainty before observing the data
+- Specify the **prior** distribution before observing the data
+
 
 ## Observed data and likelihoods
+
+```{r post-dist}
+
+ggplot() + 
+  geom_function(fun = dnorm, args = list(mean = 1, sd = 0.5), xlim = c(-2,4)) +
+  geom_function(fun = dnorm, args = list(mean = 2, sd = 0.25), xlim = c(-2,4), color = "blue", n = 201) +
+  geom_point(aes(x,y), data = tibble(x=c(1.7,1.9,2.4,2.6), y = c(0,0,0,0)), 
+             shape = 4, size = 4) +
+  scale_y_continuous("", labels = NULL) +
+  scale_x_continuous(expression(beta)) +
+  theme_bw()
+
+```
 
 - Observing data updates our prior distribution to the **posterior** distribution
 - Information about the parameters is encoded through the likelihood
@@ -416,37 +438,178 @@ $$
 $$
 for $i = 1, 2, \ldots, N$ for large $N$. $\theta_i$ is generated using MCMC or SMC
 
+## **Bayesian** Additive Regression Trees
+
+The parameters controlling $T$ are unknown and assignment priors
+
+- 
+
+BART Mc
+
 # Treatment effect models
 
 ## Causal modelling
 
+In the absence of controlled randomized or natural experiments 
+
+- Outcome $Y$
+- Treatment variable $Z \in \{0,1\}$
+- Observed confounders $X$
+
+How do we estimate average treatment effects $\mathbb{E}[Y(1) - Y(0)]$?
+
+## Causal modelling 
+
+$$Y = f(X, Z; \beta) + \varepsilon$$
+
 Assumptions:
 
-- Ignorability 
-- Positivity $0 < \text{P}(A=1~\vert~X) < 1$ for all $X$
+- Ignorability $(Y(0), Y(1) \perp Z)~\vert~X$
+- Positivity $0 < \text{P}(Z=1~\vert~X) < 1$ for all $X$
+- $f$ correctly specified 
+
+
 
 ## Treatment effect BART
 
 $$
-y = \sum_{k=1}^{K}g(x, z; T_k, M_k) + \varepsilon
+f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 $$
-
-- $z = 1$ is treatment group
+REF
 
 ## Bayesian causal forests
 
 $$
-y = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^\prime, M_k^\prime) + \varepsilon
+f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^\prime, M_k^\prime)
 $$
 
-- $z = 1$ is treatment group
-
+REF
 
 # `{tidytreatment}`
 
-## Getting started
+## BART packages in `R`
 
-## Example
+:::: {.columns}
+
+::: {.column width="50%"}
+
+Modelling:
+
+- `{BART}`
+- `{bcf}`
+- `{dbarts}`
+- `{stan4bart}`
+
+:::
+
+::: {.column width="50%"}
+
+Helper:
+
+- `{bartCause}`
+- `{treatSens}`
+- `{tidytreatment}`
+
+:::
+
+::::
+
+## Tidytreatment motivation
+
+- easily extract 'tidy' output from BART fitted models
+   - manipulation of fitted/predicted values
+   - easy plotting with `{ggplot2}` via `{ggdist}`
+- helper functions for treatment effect estimation
+- based on format from `{tidybayes}`
+
+## 2016 Atlantic Causal Inference competition
+
+```{r setup-data}
+library(aciccomp2016)
+sim <- dgp_2016(input_2016, 20, 1)
+
+data <- with(sim, data.frame(z = z, y = y, input_2016))
+
+```
+
+- Hypothetical observational data
+
+- $X$ = 58 confounders from Collaborative Perinatal Project
+(Niswander and Gordon, 1972)
+- $Z$ simulated based on $X$
+- $Y$ simulated based on $X,Z$
+
+REF
+
+## Heterogenous treatment effects
+
+```{r setup}
+#| code-fold: true
+#| code-summary: "Show code"
+
+library(dplyr)
+library(ggplot2)
+
+data %>% 
+  filter(x_2 %in% c("C","D", "E"), y < 50, y > - 50) %>%
+  mutate(z = factor(z)) %>%
+ggplot() + 
+  geom_boxplot(aes(y = y, x = z, group = z)) + 
+  facet_wrap(~x_2, labeller = as_labeller( function(x) paste("x_2 =",x) ) ) +
+  scale_x_discrete() +
+  theme_bw()
+```
+
+
+## Using `{BART}`
+
+```{r run-bart}
+#| cache: true
+#| include: false
+library(BART)
+
+bart_model <- wbart(x.train = select(data,-y), 
+                         y.train = pull(data, y),
+                         nskip = 2000, # warmup
+                         ndpost = 250) # total samples
+
+```
+
+```{r show-bart}
+#| echo: true
+#| eval: false
+library(BART)
+
+bart_model <- wbart(x.train = select(data,-y), 
+                         y.train = pull(data, y),
+                         nskip = 2000, # warmup
+                         ndpost = 250) # total samples
+
+```
+
+##  Using `{tidytreatment}`: fitted values
+
+```{r tidytreatment}
+#| echo: true
+
+library(tidybayes)
+library(tidytreatment)
+
+fitted_posterior_draws <-  fitted_draws(bart_model, 
+                                 value = "fit", 
+                                 include_newdata = FALSE)
+
+```
+
+##  Using `{tidytreatment}`: fitted values
+
+```{r tidytreatment-pdraws}
+#| echo: true
+
+head(fitted_posterior_draws)
+
+```
+
 
 # Thanks
 
