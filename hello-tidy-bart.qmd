@@ -2,6 +2,7 @@
 title: "Tidy methods for BART models using `{tidytreatment}`"
 author: "Joshua J Bon"
 institute: "CEREMADE, Université Paris-Dauphine"
+bibliography: refs.bib
 format:
   revealjs: 
     theme: default
@@ -289,16 +290,18 @@ rpart.plot(model4, cex = 1.75)
 
 ::::
 
-## Trees have interactions
+## Trees model interactions
 
 {{< pdf figs/regression-tree-diagram.pdf height=350 width=900 >}}
 
-## Trees
+## Tree complexity
 
 More branches can result in
 
 - Better approximation of smooth functions (same $x_i$)
 - More interaction effects (different $x_i$)
+
+## Tree complexity
 
 Empirically, the sum of many shallow trees is better
 
@@ -378,6 +381,9 @@ graph TB
 
 $$f(x; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k)$$
 
+- $T_k$: structure and decision rules $k$th tree
+- $M_k$: mean values in leaves of $k$th tree
+
 # Bayesian statistics
 
 ## Parameters and priors
@@ -392,7 +398,7 @@ ggplot() +
 
 ```
 
-- Parameters are random variables
+- Unknown parameters, $\beta$, are random variables
 - Represent uncertainty with probability distributions
 - Specify the **prior** distribution before observing the data
 
@@ -412,8 +418,8 @@ ggplot() +
 
 ```
 
-- Observing data updates our prior distribution to the **posterior** distribution
-- Information about the parameters is encoded through the likelihood
+- Information about the parameters is encoded through the likelihood function of observed data
+- Update prior information with likelihood to gain **posterior**
 
 ## Bayes rule and inference
 
@@ -429,20 +435,25 @@ $$
 
 ## Computational inference
 
-The posterior is often intractable. Typically the marginal likelihood $p(D)$ is not available in closed form.
+The posterior is often intractable
+
+- the marginal likelihood $p(D)$ is not available in closed form
 
 Rely on Monte Carlo approximations using
 
 $$
 \theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ D)
 $$
-for $i = 1, 2, \ldots, N$ for large $N$. $\theta_i$ is generated using MCMC or SMC
+
+for $i = 1, 2, \ldots, N$ for large $N$. 
+
+- $\theta_i$ is generated using MCMC or SMC
 
 ## **Bayesian** Additive Regression Trees
 
-The parameters controlling $T$ are unknown and assignment priors
+The parameters controlling $T_k$'s are unknown and assignment priors
 
-- 
+- See [@chipman2010]
 
 BART Mc
 
@@ -475,7 +486,7 @@ Assumptions:
 $$
 f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 $$
-REF
+Using standard BART models [@chipman2010] with $z$ as a variable
 
 ## Bayesian causal forests
 
@@ -528,7 +539,8 @@ Helper:
 library(aciccomp2016)
 sim <- dgp_2016(input_2016, 20, 1)
 
-data <- with(sim, data.frame(z = z, y = y, input_2016))
+data <- with(sim, data.frame(z = z, y = y, input_2016)) %>%
+    mutate(z = factor(z))
 
 ```
 
@@ -552,7 +564,6 @@ library(ggplot2)
 
 data %>% 
   filter(x_2 %in% c("C","D", "E"), y < 50, y > - 50) %>%
-  mutate(z = factor(z)) %>%
 ggplot() + 
   geom_boxplot(aes(y = y, x = z, group = z)) + 
   facet_wrap(~x_2, labeller = as_labeller( function(x) paste("x_2 =",x) ) ) +
@@ -561,7 +572,7 @@ ggplot() +
 ```
 
 
-## Using `{BART}`
+## `{BART}`: Fitting the model
 
 ```{r run-bart}
 #| cache: true
@@ -571,7 +582,7 @@ library(BART)
 bart_model <- wbart(x.train = select(data,-y), 
                          y.train = pull(data, y),
                          nskip = 2000, # warmup
-                         ndpost = 250) # total samples
+                         ndpost = 500) # total samples
 
 ```
 
@@ -587,7 +598,7 @@ bart_model <- wbart(x.train = select(data,-y),
 
 ```
 
-##  Using `{tidytreatment}`: fitted values
+##  `{tidytreatment}`: 'tidy' fitted values
 
 ```{r tidytreatment}
 #| echo: true
@@ -601,12 +612,35 @@ fitted_posterior_draws <-  fitted_draws(bart_model,
 
 ```
 
-##  Using `{tidytreatment}`: fitted values
+##  Using `{tidytreatment}`: 'tidy' fitted values
 
 ```{r tidytreatment-pdraws}
 #| echo: true
 
 head(fitted_posterior_draws)
+
+```
+
+## Using `{tidytreatment}`: plotting with `{ggdist}` 
+
+```{r tidytreatment-ggdist}
+#| echo: true
+#| code-fold: true
+#| code-summary: "See code"
+#| cache: true
+
+  interest_var <- data %>% 
+  select(z,x_2) %>%
+  mutate(.row = 1:n())
+
+fitted_posterior_draws %>%
+  left_join(interest_var, by = ".row") %>%
+  filter(x_2 %in% c("C","D", "E")) %>% 
+  ggplot() + 
+  stat_halfeye(aes(x = z, y = fit)) + 
+  facet_wrap(~x_2, labeller = as_labeller( function(x) paste("x_2 =",x) ), scales = "free") +
+  xlab("Treatment (z)") + ylab("Posterior predicted value") +
+  theme_bw() + ggtitle("Effect of treatment with 'x_2' on posterior fitted values")
 
 ```
 

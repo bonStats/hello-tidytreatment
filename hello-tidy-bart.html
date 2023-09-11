@@ -94,7 +94,26 @@
     code span.va { color: #111111; } /* Variable */
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
-  </style>
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
   <link rel="stylesheet" href="hello-tidy-bart_files/libs/revealjs/dist/theme/quarto.css">
   <link href="hello-tidy-bart_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="hello-tidy-bart_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
@@ -577,17 +596,20 @@ M, &amp; \text{Terminal node values} \\
 </div>
 </div>
 </section>
-<section id="trees-have-interactions" class="slide level2">
-<h2>Trees have interactions</h2>
+<section id="trees-model-interactions" class="slide level2">
+<h2>Trees model interactions</h2>
 <p><object data="figs/regression-tree-diagram.pdf" type="application/pdf" width="900" height="350"><p>Unable to display PDF file. <a href="figs/regression-tree-diagram.pdf">Download</a> instead.</p></object></p>
 </section>
-<section id="trees" class="slide level2">
-<h2>Trees</h2>
+<section id="tree-complexity" class="slide level2">
+<h2>Tree complexity</h2>
 <p>More branches can result in</p>
 <ul>
 <li>Better approximation of smooth functions (same <span class="math inline">\(x_i\)</span>)</li>
 <li>More interaction effects (different <span class="math inline">\(x_i\)</span>)</li>
 </ul>
+</section>
+<section id="tree-complexity-1" class="slide level2">
+<h2>Tree complexity</h2>
 <p>Empirically, the sum of many shallow trees is better</p>
 <ul>
 <li>Each tree captures a different aspect of variation</li>
@@ -663,6 +685,10 @@ M, &amp; \text{Terminal node values} \\
 <section id="additive-regression-trees-2" class="slide level2">
 <h2>Additive regression trees</h2>
 <p><span class="math display">\[f(x; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k)\]</span></p>
+<ul>
+<li><span class="math inline">\(T_k\)</span>: structure and decision rules <span class="math inline">\(k\)</span>th tree</li>
+<li><span class="math inline">\(M_k\)</span>: mean values in leaves of <span class="math inline">\(k\)</span>th tree</li>
+</ul>
 </section></section>
 <section>
 <section id="bayesian-statistics" class="title-slide slide level1 center">
@@ -673,7 +699,7 @@ M, &amp; \text{Terminal node values} \\
 <h2>Parameters and priors</h2>
 
 <img data-src="hello-tidy-bart_files/figure-revealjs/prior-dist-1.png" width="960" class="r-stretch"><ul>
-<li>Parameters are random variables</li>
+<li>Unknown parameters, <span class="math inline">\(\beta\)</span>, are random variables</li>
 <li>Represent uncertainty with probability distributions</li>
 <li>Specify the <strong>prior</strong> distribution before observing the data</li>
 </ul>
@@ -682,8 +708,8 @@ M, &amp; \text{Terminal node values} \\
 <h2>Observed data and likelihoods</h2>
 
 <img data-src="hello-tidy-bart_files/figure-revealjs/post-dist-1.png" width="960" class="r-stretch"><ul>
-<li>Observing data updates our prior distribution to the <strong>posterior</strong> distribution</li>
-<li>Information about the parameters is encoded through the likelihood</li>
+<li>Information about the parameters is encoded through the likelihood function of observed data</li>
+<li>Update prior information with likelihood to gain <strong>posterior</strong></li>
 </ul>
 </section>
 <section id="bayes-rule-and-inference" class="slide level2">
@@ -701,17 +727,24 @@ p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
 </section>
 <section id="computational-inference" class="slide level2">
 <h2>Computational inference</h2>
-<p>The posterior is often intractable. Typically the marginal likelihood <span class="math inline">\(p(D)\)</span> is not available in closed form.</p>
+<p>The posterior is often intractable</p>
+<ul>
+<li>the marginal likelihood <span class="math inline">\(p(D)\)</span> is not available in closed form</li>
+</ul>
 <p>Rely on Monte Carlo approximations using</p>
 <p><span class="math display">\[
 \theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ D)
-\]</span> for <span class="math inline">\(i = 1, 2, \ldots, N\)</span> for large <span class="math inline">\(N\)</span>. <span class="math inline">\(\theta_i\)</span> is generated using MCMC or SMC</p>
+\]</span></p>
+<p>for <span class="math inline">\(i = 1, 2, \ldots, N\)</span> for large <span class="math inline">\(N\)</span>.</p>
+<ul>
+<li><span class="math inline">\(\theta_i\)</span> is generated using MCMC or SMC</li>
+</ul>
 </section>
 <section id="bayesian-additive-regression-trees" class="slide level2">
 <h2><strong>Bayesian</strong> Additive Regression Trees</h2>
-<p>The parameters controlling <span class="math inline">\(T\)</span> are unknown and assignment priors</p>
+<p>The parameters controlling <span class="math inline">\(T_k\)</span>’s are unknown and assignment priors</p>
 <ul>
-<li></li>
+<li>See <span class="citation" data-cites="chipman2010">(<a href="#/contact" role="doc-biblioref" onclick="">Chipman, George, and McCulloch 2010</a>)</span></li>
 </ul>
 <p>BART Mc</p>
 </section></section>
@@ -744,7 +777,7 @@ p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
 <h2>Treatment effect BART</h2>
 <p><span class="math display">\[
 f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
-\]</span> REF</p>
+\]</span> Using standard BART models <span class="citation" data-cites="chipman2010">(<a href="#/contact" role="doc-biblioref" onclick="">Chipman, George, and McCulloch 2010</a>)</span> with <span class="math inline">\(z\)</span> as a variable</p>
 </section>
 <section id="bayesian-causal-forests" class="slide level2">
 <h2>Bayesian causal forests</h2>
@@ -805,8 +838,8 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^
 <h2>Heterogenous treatment effects</h2>
 
 <img data-src="hello-tidy-bart_files/figure-revealjs/setup-1.png" width="960" class="r-stretch"></section>
-<section id="using-bart" class="slide level2">
-<h2>Using <code>{BART}</code></h2>
+<section id="bart-fitting-the-model" class="slide level2">
+<h2><code>{BART}</code>: Fitting the model</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(BART)</span>
 <span id="cb1-2"><a href="#cb1-2"></a></span>
@@ -816,8 +849,8 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^
 <span id="cb1-6"><a href="#cb1-6"></a>                         <span class="at">ndpost =</span> <span class="dv">250</span>) <span class="co"># total samples</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="using-tidytreatment-fitted-values" class="slide level2">
-<h2>Using <code>{tidytreatment}</code>: fitted values</h2>
+<section id="tidytreatment-tidy-fitted-values" class="slide level2">
+<h2><code>{tidytreatment}</code>: ‘tidy’ fitted values</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">library</span>(tidybayes)</span>
 <span id="cb2-2"><a href="#cb2-2"></a><span class="fu">library</span>(tidytreatment)</span>
@@ -827,34 +860,60 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^
 <span id="cb2-6"><a href="#cb2-6"></a>                                 <span class="at">include_newdata =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="using-tidytreatment-fitted-values-1" class="slide level2">
-<h2>Using <code>{tidytreatment}</code>: fitted values</h2>
+<section id="using-tidytreatment-tidy-fitted-values" class="slide level2">
+<h2>Using <code>{tidytreatment}</code>: ‘tidy’ fitted values</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">head</span>(fitted_posterior_draws)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":[".row"],"name":[1],"type":["int"],"align":["right"]},{"label":[".chain"],"name":[2],"type":["int"],"align":["right"]},{"label":[".iteration"],"name":[3],"type":["int"],"align":["right"]},{"label":[".draw"],"name":[4],"type":["int"],"align":["right"]},{"label":["fit"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"NA","3":"NA","4":"1","5":"-4.089278"},{"1":"2","2":"NA","3":"NA","4":"1","5":"-12.381020"},{"1":"3","2":"NA","3":"NA","4":"1","5":"-1.945681"},{"1":"4","2":"NA","3":"NA","4":"1","5":"-14.857739"},{"1":"5","2":"NA","3":"NA","4":"1","5":"-9.841177"},{"1":"6","2":"NA","3":"NA","4":"1","5":"-10.508367"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[".row"],"name":[1],"type":["int"],"align":["right"]},{"label":[".chain"],"name":[2],"type":["int"],"align":["right"]},{"label":[".iteration"],"name":[3],"type":["int"],"align":["right"]},{"label":[".draw"],"name":[4],"type":["int"],"align":["right"]},{"label":["fit"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"NA","3":"NA","4":"1","5":"-3.784189"},{"1":"2","2":"NA","3":"NA","4":"1","5":"-12.031938"},{"1":"3","2":"NA","3":"NA","4":"1","5":"-1.854494"},{"1":"4","2":"NA","3":"NA","4":"1","5":"-14.544073"},{"1":"5","2":"NA","3":"NA","4":"1","5":"-9.442587"},{"1":"6","2":"NA","3":"NA","4":"1","5":"-10.615441"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
 </div>
-</section></section>
+</section>
+<section id="using-tidytreatment-plotting-with-ggdist" class="slide level2">
+<h2>Using <code>{tidytreatment}</code>: plotting with <code>{ggdist}</code></h2>
+<div class="cell">
+<details>
+<summary>See code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>  interest_var <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2"></a>  <span class="fu">select</span>(z,x_2) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="fu">mutate</span>(<span class="at">.row =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>())</span>
+<span id="cb4-4"><a href="#cb4-4"></a></span>
+<span id="cb4-5"><a href="#cb4-5"></a>fitted_posterior_draws <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a>  <span class="fu">left_join</span>(interest_var, <span class="at">by =</span> <span class="st">".row"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>  <span class="fu">filter</span>(x_2 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"C"</span>,<span class="st">"D"</span>, <span class="st">"E"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-8"><a href="#cb4-8"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb4-9"><a href="#cb4-9"></a>  <span class="fu">stat_halfeye</span>(<span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> fit)) <span class="sc">+</span> </span>
+<span id="cb4-10"><a href="#cb4-10"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>x_2, <span class="at">labeller =</span> <span class="fu">as_labeller</span>( <span class="cf">function</span>(x) <span class="fu">paste</span>(<span class="st">"x_2 ="</span>,x) ), <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a>  <span class="fu">xlab</span>(<span class="st">"Treatment (z)"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Posterior predicted value"</span>) <span class="sc">+</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Effect of treatment with 'x_2' on posterior fitted values"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+
+</div>
+<img data-src="hello-tidy-bart_files/figure-revealjs/tidytreatment-ggdist-1.png" width="960" class="r-stretch"></section></section>
 <section>
 <section id="thanks" class="title-slide slide level1 center">
 <h1>Thanks</h1>
 
 </section>
-<section id="contact" class="slide level2">
+<section id="contact" class="slide level2 smaller scrollable">
 <h2>Contact</h2>
 <ul>
 <li><p><a href="mailto:joshuajbon@gmail.com">joshuajbon@gmail.com</a></p></li>
 <li><p><a href="https://github.com/bonStats/tidytreatment" class="uri">https://github.com/bonStats/tidytreatment</a></p></li>
-<li><p><a href="https://twitter.com/bonStats"><span class="citation" data-cites="bonStats">@bonStats</span></a></p></li>
+<li><p><a href="https://twitter.com/bonStats"><span class="citation" data-cites="bonStats">(<span><strong>bonStats?</strong></span>)</span></a></p></li>
 </ul>
 <div class="footer footer-default">
 
+</div>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-chipman2010" class="csl-entry" role="listitem">
+Chipman, Hugh A., Edward I. George, and Robert E. McCulloch. 2010. <span>“<span class="nocase">BART: Bayesian additive regression trees</span>.”</span> <em>The Annals of Applied Statistics</em> 4 (1): 266–98. <a href="https://doi.org/10.1214/09-AOAS285">https://doi.org/10.1214/09-AOAS285</a>.
+</div>
 </div>
 </section></section>
     </div>
