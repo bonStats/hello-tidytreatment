@@ -431,27 +431,33 @@ Joshua J Bon
 </section>
 <section id="about-me" class="slide level2">
 <h2>About me</h2>
+<div>
 <ul>
 <li><p><strong>Statistician</strong> Develop statistical algorithms</p></li>
 <li><p><strong>Programmer</strong> (Attempt) to write useful software</p></li>
 <li><p><strong>Data scientist</strong> Design/implement statistical analyses</p></li>
 </ul>
+</div>
 <div class="fragment">
+<div>
 <ul>
 <li>PhD and PostDoc at QUT, Brisbane</li>
 <li>PostDoc at Paris-Dauphine PSL</li>
 </ul>
 </div>
+</div>
 </section>
 <section id="talk-overview" class="slide level2">
 <h2>Talk overview</h2>
 <ul>
-<li>ART: Additive Regression Tree</li>
-<li>B: Bayesian statistics</li>
-<li>Treatment effect models</li>
-<li><code>{tidytreatment}</code></li>
+<li class="fragment">ART: Additive Regression Tree</li>
+<li class="fragment">B: Bayesian statistics</li>
+<li class="fragment">Treatment effect models</li>
+<li class="fragment"><code>{tidytreatment}</code></li>
 </ul>
-<p>Aims: BART overview + useful packages in <code>R</code></p>
+<div class="fragment">
+<p><strong>Aim</strong>: BART overview + BART in <code>R</code></p>
+</div>
 </section>
 <section>
 <section id="additive-regression-trees" class="title-slide slide level1 center">
@@ -469,11 +475,14 @@ Y = \beta \cdot X + \varepsilon
 \]</span></p>
 <p><span class="math display">\[
 \varepsilon \sim \text{N}(0,\sigma^2)
-\]</span> When <span class="math inline">\(p\)</span> large, many variables and interaction to consider</p>
+\]</span></p>
+<div class="fragment">
+<p>When <span class="math inline">\(p\)</span> large, many variables and interaction to consider</p>
 <ul>
-<li>How to do model selection?</li>
-<li>What if relationship is not linear?</li>
+<li class="fragment">How to do model selection?</li>
+<li class="fragment">What if relationship is not linear?</li>
 </ul>
+</div>
 </section>
 <section id="nonlinear-regression" class="slide level2">
 <h2>Nonlinear regression</h2>
@@ -483,10 +492,12 @@ Y = \color{blue}{f(X; \beta)} + \varepsilon_i
 <p><span class="math display">\[
 \varepsilon \sim \text{N}(0,\sigma^2)
 \]</span></p>
+<div class="fragment">
+<p>What to choose for <span class="math inline">\(f\)</span>?</p>
 <ul>
-<li>What to choose for <span class="math inline">\(f\)</span>?</li>
-<li>Parsimonious and flexible</li>
+<li class="fragment">Parsimonious and flexible</li>
 </ul>
+</div>
 </section>
 <section id="what-about-binary-trees" class="slide level2">
 <h2>What about binary trees?</h2>
@@ -515,15 +526,19 @@ Y = \color{blue}{f(X; \beta)} + \varepsilon_i
 </div>
 </div>
 </div>
+<div class="fragment">
 <p><span class="math display">\[
 \color{blue}{f(x; \beta)} = \text{piecewise constant}
 \]</span></p>
+</div>
+<div class="fragment">
 <p><span class="math display">\[
 \color{blue}{\beta} = \begin{cases}
 T, &amp; \text{Tree structure} \\
 M, &amp; \text{Terminal node values} \\
 \end{cases}
 \]</span></p>
+</div>
 </section>
 <section id="trees-are-flexible" class="slide level2">
 <h2>Trees are flexible</h2>
@@ -605,17 +620,17 @@ M, &amp; \text{Terminal node values} \\
 <h2>Tree complexity</h2>
 <p>More branches can result in</p>
 <ul>
-<li>Better approximation of smooth functions (same <span class="math inline">\(x_i\)</span>)</li>
-<li>More interaction effects (different <span class="math inline">\(x_i\)</span>)</li>
+<li class="fragment">Better approximation of smooth functions (same <span class="math inline">\(x_i\)</span>)</li>
+<li class="fragment">More interaction effects (different <span class="math inline">\(x_i\)</span>)</li>
 </ul>
 </section>
 <section id="tree-complexity-1" class="slide level2">
 <h2>Tree complexity</h2>
 <p>Empirically, the sum of many shallow trees is better</p>
 <ul>
-<li>Each tree captures a different aspect of variation</li>
-<li>Select different variables to include</li>
-<li>Better approximation of smooth functions</li>
+<li class="fragment">Each tree captures a different aspect of variation</li>
+<li class="fragment">Select different variables to include</li>
+<li class="fragment">Better approximation of smooth functions</li>
 </ul>
 </section>
 <section id="additive-regression-trees-1" class="slide level2">
@@ -687,16 +702,16 @@ M, &amp; \text{Terminal node values} \\
 <h2>Additive regression trees</h2>
 <p><span class="math display">\[\color{blue}{f(x; \beta)} = \sum_{k=1}^{K}g(x; T_k, M_k)\]</span></p>
 <ul>
-<li><span class="math inline">\(T_k\)</span>: structure and decision rules <span class="math inline">\(k\)</span>th tree</li>
-<li><span class="math inline">\(M_k\)</span>: mean values in leaves of <span class="math inline">\(k\)</span>th tree</li>
+<li class="fragment"><span class="math inline">\(T_k\)</span>: structure and decision rules <span class="math inline">\(k\)</span>th tree</li>
+<li class="fragment"><span class="math inline">\(M_k\)</span>: mean values in leaves of <span class="math inline">\(k\)</span>th tree</li>
 </ul>
 </section>
 <section id="additive-regression-trees-3" class="slide level2">
 <h2>Additive regression trees</h2>
 <p>How to proceed with parameter inference?</p>
 <ul>
-<li>Uncertainty quantification</li>
-<li>Prevent overfitting</li>
+<li class="fragment">Uncertainty quantification</li>
+<li class="fragment">Prevent overfitting</li>
 </ul>
 </section></section>
 <section>
@@ -708,17 +723,17 @@ M, &amp; \text{Terminal node values} \\
 <h2>Parameters and priors</h2>
 
 <img data-src="index_files/figure-revealjs/prior-dist-1.png" width="960" class="r-stretch"><ul>
-<li>Unknown parameters, <span class="math inline">\(\beta\)</span>, are random variables</li>
-<li>Represent uncertainty with probability distributions</li>
-<li>Specify the <strong>prior</strong> distribution before observing the data</li>
+<li class="fragment">Unknown parameters, <span class="math inline">\(\beta\)</span>, are random variables</li>
+<li class="fragment">Represent uncertainty with probability distributions</li>
+<li class="fragment">Specify the <strong>prior</strong> distribution before observing the data</li>
 </ul>
 </section>
 <section id="observed-data-and-likelihoods" class="slide level2">
 <h2>Observed data and likelihoods</h2>
 
 <img data-src="index_files/figure-revealjs/post-dist-1.png" width="960" class="r-stretch"><ul>
-<li>Information about the parameters is encoded through the likelihood function of observed data</li>
-<li>Prior <span class="math inline">\(+\)</span> likelihood <span class="math inline">\(\Rightarrow\)</span> <span style="color:blue;">posterior</span></li>
+<li class="fragment">Information about the parameters is encoded through the likelihood function of observed data</li>
+<li class="fragment">Prior <span class="math inline">\(+\)</span> likelihood <span class="math inline">\(\Rightarrow\)</span> <span style="color:blue;">posterior</span></li>
 </ul>
 </section>
 <section id="bayes-rule-and-inference" class="slide level2">
@@ -727,9 +742,9 @@ M, &amp; \text{Terminal node values} \\
 p(\theta ~\vert~ y) = \frac{p(y ~\vert~ \theta)p(\theta)}{p(y)}
 \]</span></p>
 <ul>
-<li>Prior distribution <span class="math inline">\(p(\theta)\)</span></li>
-<li>Likelihood <span class="math inline">\(p(y ~\vert~ \theta) = L(\theta~\vert~y)\)</span></li>
-<li>Marginal likelihood <span class="math inline">\(p(y)\)</span></li>
+<li class="fragment">Prior distribution <span class="math inline">\(p(\theta)\)</span></li>
+<li class="fragment">Likelihood <span class="math inline">\(p(y ~\vert~ \theta) = L(\theta~\vert~y)\)</span></li>
+<li class="fragment">Marginal likelihood <span class="math inline">\(p(y)\)</span></li>
 </ul>
 <p>E.g. <span class="math inline">\(\theta = [\beta, \sigma^2]\)</span></p>
 </section>
@@ -740,28 +755,30 @@ p(\theta ~\vert~ y) = \frac{p(y ~\vert~ \theta)p(\theta)}{p(y)}
 \theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ y)
 \]</span> of the posterior since <span class="math inline">\(p(y)\)</span> not available in closed form.</p>
 <ul>
-<li>Compute samples <span class="math inline">\(i = 1, 2, \ldots, N\)</span> for large <span class="math inline">\(N\)</span>.</li>
-<li>Markov chain Monte Carlo or sequential Monte Carlo</li>
-<li>Most BART models estimated with Gibbs sampler <span class="citation" data-cites="chipman2010">(<a href="#/references" role="doc-biblioref" onclick="">Chipman, George, and McCulloch 2010</a>)</span></li>
+<li class="fragment">Compute samples <span class="math inline">\(i = 1, 2, \ldots, N\)</span> for large <span class="math inline">\(N\)</span>.</li>
+<li class="fragment">Markov chain Monte Carlo or sequential Monte Carlo</li>
+<li class="fragment">Most BART models estimated with Gibbs sampler <span class="citation" data-cites="chipman2010">(<a href="#/references" role="doc-biblioref" onclick="">Chipman, George, and McCulloch 2010</a>)</span></li>
 </ul>
 </section>
 <section id="bayesian-additive-regression-trees" class="slide level2">
 <h2><strong>Bayesian</strong> Additive Regression Trees</h2>
-<p>The parameters controlling <span class="math inline">\(T_k\)</span>’s are unknown and assignment priors</p>
+<p>The parameters controlling <span class="math inline">\(T_k\)</span>’s are unknown and assigned priors</p>
 <ul>
-<li>Each tree is a weak learner
+<li class="fragment">Each tree is a weak learner
 <ul>
-<li>Avoid overfitting</li>
+<li class="fragment">Avoid overfitting</li>
 </ul></li>
-<li>Uncertainty natural in the Bayesian paradigm
+<li class="fragment">Uncertainty natural in the Bayesian paradigm
 <ul>
-<li>Parameter uncertainty represented by posterior draws</li>
+<li class="fragment">Parameter uncertainty represented by posterior draws</li>
 </ul></li>
 </ul>
+<div class="fragment">
 <p>Defaults in <span class="citation" data-cites="chipman2010">Chipman, George, and McCulloch (<a href="#/references" role="doc-biblioref" onclick="">2010</a>)</span> work well empirically.</p>
 <ul>
-<li>Except for binary outcomes <span class="citation" data-cites="dorie2016flexible">(<a href="#/references" role="doc-biblioref" onclick="">Dorie et al. 2016</a>)</span></li>
+<li class="fragment">Careful with binary outcomes <span class="citation" data-cites="dorie2016flexible">(<a href="#/references" role="doc-biblioref" onclick="">Dorie et al. 2016</a>)</span></li>
 </ul>
+</div>
 </section></section>
 <section>
 <section id="treatment-effect-models" class="title-slide slide level1 center">
@@ -770,29 +787,33 @@ p(\theta ~\vert~ y) = \frac{p(y ~\vert~ \theta)p(\theta)}{p(y)}
 </section>
 <section id="causal-modelling" class="slide level2">
 <h2>Causal modelling</h2>
-<p>In the absence of controlled randomized or natural experiments</p>
+<p><span class="citation" data-cites="rubin1974estimating">Rubin (<a href="#/references" role="doc-biblioref" onclick="">1974</a>)</span>: In the absence of controlled randomized or natural experiments</p>
 <ul>
-<li>Outcome <span class="math inline">\(Y\)</span></li>
-<li>Treatment variable <span class="math inline">\(Z \in \{0,1\}\)</span></li>
-<li>Observed confounders <span class="math inline">\(X\)</span></li>
+<li class="fragment">Outcome <span class="math inline">\(Y\)</span></li>
+<li class="fragment">Treatment variable <span class="math inline">\(Z \in \{0,1\}\)</span></li>
+<li class="fragment">Observed confounders <span class="math inline">\(X\)</span></li>
+<li class="fragment">Potential outcomes <span class="math inline">\(Y(1)\)</span>, <span class="math inline">\(Y(0)\)</span></li>
 </ul>
+<div class="fragment">
 <p>How do we estimate average treatment effects <span class="math inline">\(\mathbb{E}[Y(1) - Y(0)]\)</span>?</p>
-<ul>
-<li>Potential outcomes <span class="math inline">\(Y(1)\)</span>, <span class="math inline">\(Y(0)\)</span></li>
-</ul>
-<p><span class="citation" data-cites="rubin1974estimating">Rubin (<a href="#/references" role="doc-biblioref" onclick="">1974</a>)</span></p>
+</div>
 </section>
 <section id="causal-modelling-1" class="slide level2">
 <h2>Causal modelling</h2>
 <p><span class="math display">\[Y = f(X, Z; \beta) + \varepsilon\]</span></p>
+<div class="fragment">
 <p>Estimate conditional potential outcomes</p>
 <ul>
-<li><span class="math inline">\({\hat{Y}} (z)~\vert~X = \hat{f} (X,z)\)</span> for <span class="math inline">\(z\in \{0,1\}\)</span></li>
+<li class="fragment"><span class="math inline">\(({\hat{Y}} (z)~\vert~X) = f(X,z,\hat{\beta})\)</span> for <span class="math inline">\(z\in \{0,1\}\)</span></li>
 </ul>
-<p>Average over <span class="math inline">\(X\)</span> for <span class="math inline">\(\hat{Y}(z)\)</span> unconditional</p>
+</div>
+<div class="fragment">
+<p>Average over <span class="math inline">\(X\)</span> for unconditional <span class="math inline">\(\hat{Y}(z)\)</span></p>
+</div>
 </section>
 <section id="causal-modelling-2" class="slide level2">
 <h2>Causal modelling</h2>
+<div>
 <p>Calculate quantities such as:</p>
 <ul>
 <li>ATE: Average treatment effect</li>
@@ -800,12 +821,17 @@ p(\theta ~\vert~ y) = \frac{p(y ~\vert~ \theta)p(\theta)}{p(y)}
 <li>ATT: ATE on treated</li>
 <li>ATU: ATE on untreated</li>
 </ul>
+</div>
+<div class="fragment">
+<div>
 <p>Assumptions:</p>
 <ul>
 <li>Ignorability <span class="math inline">\((Y(0), Y(1) \perp Z)~\vert~X\)</span></li>
 <li>Positivity <span class="math inline">\(0 &lt; \text{P}(Z=1~\vert~X) &lt; 1\)</span> for all <span class="math inline">\(X\)</span></li>
 <li><span class="math inline">\(f\)</span> correctly specified</li>
 </ul>
+</div>
+</div>
 </section>
 <section id="treatment-effect-bart" class="slide level2">
 <h2>Treatment effect BART</h2>
@@ -813,8 +839,13 @@ p(\theta ~\vert~ y) = \frac{p(y ~\vert~ \theta)p(\theta)}{p(y)}
 f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 \]</span></p>
 <ul>
-<li><span class="math inline">\(z\)</span> becomes new variable to include</li>
-<li>Use standard BART models <span class="citation" data-cites="chipman2010">(<a href="#/references" role="doc-biblioref" onclick="">Chipman, George, and McCulloch 2010</a>)</span></li>
+<li class="fragment"><p><span class="math inline">\(z\)</span> becomes new variable to include</p></li>
+<li class="fragment"><p>Use standard BART models <span class="citation" data-cites="chipman2010">(<a href="#/references" role="doc-biblioref" onclick="">Chipman, George, and McCulloch 2010</a>)</span></p></li>
+<li class="fragment"><p>Model treatment effect changes in <span class="math inline">\(X\)</span></p>
+<ul>
+<li class="fragment">Model selection</li>
+<li class="fragment">Uncertainty quantification</li>
+</ul></li>
 </ul>
 </section></section>
 <section>
@@ -828,17 +859,17 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 <div class="column" style="width:50%;">
 <p>Modelling:</p>
 <ul>
-<li><code>{BART}</code>: GLM</li>
-<li><code>{bcf}</code></li>
-<li><code>{dbarts}</code></li>
-<li><code>{stan4bart}</code>: random effects</li>
+<li class="fragment"><code>{BART}</code>: GLM</li>
+<li class="fragment"><code>{bcf}</code></li>
+<li class="fragment"><code>{dbarts}</code></li>
+<li class="fragment"><code>{stan4bart}</code>: random effects</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <p>Helper:</p>
 <ul>
-<li><code>{bartCause}</code>: causal modelling</li>
-<li><code>{treatSens}</code>: sensitivity</li>
-<li><code>{tidytreatment}</code>:</li>
+<li class="fragment"><code>{bartCause}</code>: causal modelling</li>
+<li class="fragment"><code>{treatSens}</code>: sensitivity</li>
+<li class="fragment"><code>{tidytreatment}</code>: me!</li>
 </ul>
 </div>
 </div>
@@ -846,23 +877,26 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 <section id="tidytreatment-motivation" class="slide level2">
 <h2>Tidytreatment motivation</h2>
 <ul>
-<li>easily extract ‘tidy’ output from BART fitted models
+<li class="fragment">easily extract ‘tidy’ output from BART fitted models
 <ul>
-<li>manipulation of fitted/predicted values</li>
-<li>easy plotting with <code>{ggplot2}</code> via <code>{ggdist}</code></li>
+<li class="fragment">manipulation of fitted/predicted values</li>
+<li class="fragment">easy plotting with <code>{ggplot2}</code> via <code>{ggdist}</code></li>
 </ul></li>
-<li>helper functions for treatment effect estimation</li>
-<li>based on format from <code>{tidybayes}</code></li>
-<li>easy interface for Bayesian causal modelling</li>
+<li class="fragment">helper functions for treatment effect estimation</li>
+<li class="fragment">based on format from <code>{tidybayes}</code></li>
+<li class="fragment">easy interface for Bayesian causal modelling</li>
 </ul>
+<div class="fragment">
+<p>Martin O’Flaherty (UQ) + Sara Kalucza (Umeå)</p>
+</div>
 </section>
 <section id="atlantic-causal-inference-competition" class="slide level2">
 <h2>2016 Atlantic Causal Inference competition</h2>
 <ul>
-<li><p>Hypothetical observational data</p></li>
-<li><p><span class="math inline">\(X\)</span> = 58 confounders from Collaborative Perinatal Project <span class="citation" data-cites="niswander1972women">(<a href="#/references" role="doc-biblioref" onclick="">Niswander and Gordon 1972</a>)</span></p></li>
-<li><p><span class="math inline">\(Z\)</span> simulated based on <span class="math inline">\(X\)</span></p></li>
-<li><p><span class="math inline">\(Y\)</span> simulated based on <span class="math inline">\(X,Z\)</span></p></li>
+<li class="fragment"><p>Hypothetical observational data</p></li>
+<li class="fragment"><p><span class="math inline">\(X\)</span> = 58 confounders from Collaborative Perinatal Project <span class="citation" data-cites="niswander1972women">(<a href="#/references" role="doc-biblioref" onclick="">Niswander and Gordon 1972</a>)</span></p></li>
+<li class="fragment"><p><span class="math inline">\(Z\)</span> simulated based on <span class="math inline">\(X\)</span></p></li>
+<li class="fragment"><p><span class="math inline">\(Y\)</span> simulated based on <span class="math inline">\(X,Z\)</span></p></li>
 </ul>
 <p><span class="citation" data-cites="dorie2019comp">Dorie et al. (<a href="#/references" role="doc-biblioref" onclick="">2019</a>)</span></p>
 </section>
@@ -895,7 +929,8 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 <section id="tidytreatment-tidy-fitted-values-1" class="slide level2">
 <h2><code>{tidytreatment}</code>: ‘tidy’ fitted values</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">head</span>(fitted_posterior_draws)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: grouped by .row</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="fu">head</span>(fitted_posterior_draws)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <div class="cell">
@@ -946,7 +981,8 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 <section id="using-tidytreatment-treatment-effects-1" class="slide level2">
 <h2>Using <code>{tidytreatment}</code>: treatment effects</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="fu">head</span>(posterior_treatment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># print:</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="fu">head</span>(posterior_treatment)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <div class="cell">
@@ -963,21 +999,21 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 </section>
 <section id="using-tidytreatment-treatment-effects-2" class="slide level2">
 <h2>Using <code>{tidytreatment}</code>: treatment effects</h2>
-<div class="cell" data-hash="index_cache/revealjs/tidytreatment-treatment-plot_fb6523bdfec3f59f2ea52385132aee36">
+<div class="cell" data-hash="index_cache/revealjs/tidytreatment-treatment-plot_27693e43bfe89e56bf3c3fd159fc68e4">
 <details>
 <summary>See code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>posterior_treatment <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">cte_hat =</span> <span class="fu">mean</span>(cte)) <span class="sc">%&gt;%</span> </span>
 <span id="cb7-2"><a href="#cb7-2"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
 <span id="cb7-3"><a href="#cb7-3"></a>  <span class="fu">scale_x_continuous</span>(<span class="st">"Subject mean CTE"</span>) <span class="sc">+</span></span>
 <span id="cb7-4"><a href="#cb7-4"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x =</span> cte_hat)) <span class="sc">+</span> </span>
-<span id="cb7-5"><a href="#cb7-5"></a>  <span class="fu">theme_bw</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-5"><a href="#cb7-5"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">20</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 </div>
 <img data-src="index_files/figure-revealjs/tidytreatment-treatment-plot-1.png" width="960" class="r-stretch"></section>
 <section id="using-tidytreatment-treatment-effects-3" class="slide level2">
 <h2>Using <code>{tidytreatment}</code>: treatment effects</h2>
-<div class="cell" data-hash="index_cache/revealjs/tidytreatment-treatment-plot-2_f8f87ddb5dae5a35d73aa942eacfed75">
+<div class="cell" data-hash="index_cache/revealjs/tidytreatment-treatment-plot-2_82d01aa1c3626b3c4cf307215be788bf">
 <details>
 <summary>See code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>posterior_treatment <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>z) <span class="sc">%&gt;%</span> </span>
@@ -987,7 +1023,7 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 <span id="cb8-5"><a href="#cb8-5"></a>  <span class="fu">geom_interval</span>(<span class="fu">aes</span>(<span class="at">x =</span> .orow, <span class="at">y=</span> cte, <span class="at">ymin =</span> .lower, <span class="at">ymax =</span> .upper)) <span class="sc">+</span></span>
 <span id="cb8-6"><a href="#cb8-6"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> .orow, <span class="at">y =</span> cte), <span class="at">shape =</span> <span class="st">"circle open"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
 <span id="cb8-7"><a href="#cb8-7"></a>  <span class="fu">ylab</span>(<span class="st">"Median posterior CATE for each subject (95% CI)"</span>) <span class="sc">+</span></span>
-<span id="cb8-8"><a href="#cb8-8"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span> <span class="fu">scale_colour_brewer</span>() <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">20</span>) <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span> <span class="fu">scale_colour_brewer</span>() <span class="sc">+</span></span>
 <span id="cb8-9"><a href="#cb8-9"></a>  <span class="fu">theme</span>(<span class="at">axis.title.y =</span> <span class="fu">element_blank</span>(), </span>
 <span id="cb8-10"><a href="#cb8-10"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_blank</span>(), </span>
 <span id="cb8-11"><a href="#cb8-11"></a>        <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>(),</span>
@@ -999,6 +1035,9 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 <section id="using-tidytreatment-average-treatment-effect" class="slide level2">
 <h2>Using <code>{tidytreatment}</code>: average treatment effect</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>posterior_treatment <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span> <span class="co"># undo .row grouping</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>  <span class="fu">summarise</span>(<span class="at">ATE =</span> <span class="fu">mean</span>(cte), <span class="at">sd =</span> <span class="fu">sd</span>(cte))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
 <div data-pagedtable="false">
@@ -1018,18 +1057,20 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 <h2>BART with estimated propensity score</h2>
 <p><span class="citation" data-cites="hahn2020bayesian">Hahn, Murray, and Carvalho (<a href="#/references" role="doc-biblioref" onclick="">2020</a>)</span> propose using propensity score in BART model, roughly:</p>
 <ol type="1">
-<li>Fit variable selection model (VS): Regress outcome against variables (excluding treatment)</li>
-<li>Select a subset of covariate from the VS model which are most associated with the outcome</li>
-<li>Fit a propensity score model (PS): A probit/logit model estimating the propensity score using only the selected covariates</li>
-<li>Fit the treatment effect model (TE): Using the original covariates and propensity score estimate</li>
+<li class="fragment">Fit variable selection model (VS): Regress outcome against variables (excluding treatment)</li>
+<li class="fragment">Select a subset of covariate from the VS model which are most associated with the outcome</li>
+<li class="fragment">Fit a propensity score model (PS): A probit/logit model estimating the propensity score using only the selected covariates</li>
+<li class="fragment">Fit the treatment effect model (TE): Using the original covariates and propensity score estimate</li>
 </ol>
 <p>Why? The regularisation that occurs in BART models may discount treatment assignment estimation</p>
 </section>
 <section id="common-support-calculations" class="slide level2">
 <h2>Common support calculations</h2>
-<p>Estimates of <span class="math inline">\(Y(1) - Y(0) ~ \vert X = x\)</span> may have higher uncertainty if <span class="math inline">\(x\)</span> is not observed for subjects with <span class="math inline">\(Z=1\)</span> and <span class="math inline">\(Z=0\)</span>.</p>
-<p>Problem of extrapolation. How far can we extrapolate? We want <strong>common support</strong>.</p>
-<p>Only include <span class="math inline">\(Y(1) - Y(0) ~ \vert X = x\)</span> in ATE calculations when <span class="math inline">\(x\)</span> has common support.</p>
+<ul>
+<li class="fragment"><p>Estimates of <span class="math inline">\(Y(1) - Y(0) ~ \vert X = x\)</span> may have higher uncertainty if <span class="math inline">\(x\)</span> is not observed for subjects with <span class="math inline">\(Z=1\)</span> and <span class="math inline">\(Z=0\)</span>.</p></li>
+<li class="fragment"><p>Problem of extrapolation. How far can we extrapolate? We want <strong>common support</strong>.</p></li>
+<li class="fragment"><p>Only include <span class="math inline">\(Y(1) - Y(0) ~ \vert X = x\)</span> in ATE calculations when <span class="math inline">\(x\)</span> has common support.</p></li>
+</ul>
 <p><span class="citation" data-cites="hill2013assessing">Hill and Su (<a href="#/references" role="doc-biblioref" onclick="">2013</a>)</span></p>
 </section>
 <section id="bayesian-causal-forests" class="slide level2">
@@ -1041,20 +1082,29 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^
 </section>
 <section id="tidytreatment-compatibility" class="slide level2">
 <h2><code>{tidytreatment}</code> compatibility</h2>
+<p><strong>CRAN</strong>: <a href="https://CRAN.R-project.org/package=tidytreatment" class="uri">https://CRAN.R-project.org/package=tidytreatment</a></p>
+<p><strong>GitHub</strong>: <a href="https://github.com/bonStats/tidytreatment" class="uri">https://github.com/bonStats/tidytreatment</a></p>
 <ul>
-<li><strong>CRAN</strong> version supports <code>{BART}</code> and <code>{bartMachine}</code></li>
-<li><strong>GitHub</strong> version support <code>{stan4bart}</code> and <code>{bartCause}</code></li>
-<li>Support for <code>{bcf}</code> developed but on hold</li>
+<li class="fragment">CRAN version supports <code>{BART}</code> and <code>{bartMachine}</code></li>
+<li class="fragment">GitHub version support <code>{stan4bart}</code> and <code>{bartCause}</code></li>
+<li class="fragment">Support for <code>{bcf}</code> developed but on hold</li>
 </ul>
-<p><a href="https://CRAN.R-project.org/package=tidytreatment" class="uri">https://CRAN.R-project.org/package=tidytreatment</a></p>
-<p><a href="https://github.com/bonStats/tidytreatment" class="uri">https://github.com/bonStats/tidytreatment</a></p>
+</section>
+<section id="thanks" class="slide level2">
+<h2>Thanks</h2>
+<div>
+<ul>
+<li>QUEX Institute Accelerator Grant Scheme</li>
+<li>Ilke, Kim</li>
+<li>Institute for Social Science Research, UQ</li>
+</ul>
+</div>
 </section>
 <section id="contact" class="slide level2">
 <h2>Contact</h2>
-<p>Thanks!</p>
 <ul>
-<li><p><a href="mailto:joshuajbon@gmail.com">joshuajbon@gmail.com</a></p></li>
-<li><p><a href="https://twitter.com/bonStats"><span class="citation" data-cites="bonStats">(<span><strong>bonStats?</strong></span>)</span></a></p></li>
+<li class="fragment"><p><a href="mailto:joshuajbon@gmail.com">joshuajbon@gmail.com</a></p></li>
+<li class="fragment"><p><a href="https://twitter.com/bonStats">twitter/bonStats</a></p></li>
 </ul>
 </section>
 <section id="references" class="slide level2 smaller scrollable">

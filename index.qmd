@@ -7,21 +7,26 @@ format:
   revealjs: 
     theme: default
     df-print: paged
+    incremental: true 
 editor: visual
 ---
 
 ## About me
 
+::: {.nonincremental}
 - **Statistician** Develop statistical algorithms
 
 - **Programmer** (Attempt) to write useful software
 
 - **Data scientist** Design/implement statistical analyses
+:::
 
 . . .
 
+::: {.nonincremental}
 - PhD and PostDoc at QUT, Brisbane
 - PostDoc at Paris-Dauphine PSL
+:::
 
 ## Talk overview
 
@@ -30,7 +35,9 @@ editor: visual
 - Treatment effect models
 - `{tidytreatment}`
 
-Aims: BART overview + useful packages in `R`
+. . .
+
+**Aim**: BART overview + BART in `R`
 
 # Additive regression trees
 
@@ -54,7 +61,7 @@ xydata <- tibble(x=x,y=y)
 ggplot(xydata, aes(x=x,y=y)) +
   geom_point() + 
   geom_smooth(method = lm, se = FALSE) +
-  theme_bw()
+  theme_bw(base_size = 20)
 
 ```
 
@@ -68,6 +75,9 @@ $$
 $$
 \varepsilon \sim \text{N}(0,\sigma^2)
 $$
+
+. . .
+
 When $p$ large, many variables and interaction to consider
 
 - How to do model selection?
@@ -84,7 +94,10 @@ $$
 \varepsilon \sim \text{N}(0,\sigma^2)
 $$
 
-- What to choose for $f$?
+. . .
+
+What to choose for $f$?
+
 - Parsimonious and flexible
 
 ## What about binary trees?
@@ -109,9 +122,13 @@ graph TB
 
 ```
 
+. . .
+
 $$
 \color{blue}{f(x; \beta)} = \text{piecewise constant}
 $$
+
+. . .
 
 $$
 \color{blue}{\beta} = \begin{cases}
@@ -183,7 +200,6 @@ ggplot(xydata, aes(x=x,y=y)) +
                 control = rpart.control(
                   minsplit = minvals[2],
                   minbucket = minvals[2]))) +
-  theme_bw() +
   theme_bw(base_size = 20)
 
 ```
@@ -226,7 +242,6 @@ ggplot(xydata, aes(x=x,y=y)) +
                 control = rpart.control(
                   minsplit = minvals[3],
                   minbucket = minvals[3]))) +
-  theme_bw() +
   theme_bw(base_size = 20)
 
 ```
@@ -267,7 +282,6 @@ ggplot(xydata, aes(x=x,y=y)) +
                 control = rpart.control(
                   minsplit = minvals[4],
                   minbucket = minvals[4]))) +
-  theme_bw() +
   theme_bw(base_size = 20)
 
 ```
@@ -460,58 +474,69 @@ of the posterior since $p(y)$ not available in closed form.
 
 ## **Bayesian** Additive Regression Trees
 
-The parameters controlling $T_k$'s are unknown and assignment priors
+The parameters controlling $T_k$'s are unknown and assigned priors
 
 - Each tree is a weak learner
   - Avoid overfitting
 - Uncertainty natural in the Bayesian paradigm
   - Parameter uncertainty represented by posterior draws
-  
+
+. . .
+
 Defaults in @chipman2010 work well empirically. 
  
- - Except for binary outcomes [@dorie2016flexible]
+ - Careful with binary outcomes [@dorie2016flexible]
   
 # Treatment effect models
 
 ## Causal modelling
 
-In the absence of controlled randomized or natural experiments 
+@rubin1974estimating: In the absence of controlled randomized or natural experiments 
 
 - Outcome $Y$
 - Treatment variable $Z \in \{0,1\}$
 - Observed confounders $X$
+- Potential outcomes $Y(1)$, $Y(0)$
+
+. . .
 
 How do we estimate average treatment effects $\mathbb{E}[Y(1) - Y(0)]$?
 
-- Potential outcomes $Y(1)$, $Y(0)$
-
-@rubin1974estimating
 
 ## Causal modelling 
 
 $$Y = f(X, Z; \beta) + \varepsilon$$
 
+. . .
+
 Estimate conditional potential outcomes 
 
-- ${\hat{Y}} (z)~\vert~X = \hat{f} (X,z)$ for $z\in \{0,1\}$
+- $({\hat{Y}} (z)~\vert~X) = f(X,z,\hat{\beta})$ for $z\in \{0,1\}$
 
-Average over $X$ for $\hat{Y}(z)$ unconditional
+. . .
+
+Average over $X$ for unconditional $\hat{Y}(z)$ 
 
 ## Causal modelling 
 
+::: {.nonincremental}
 Calculate quantities such as:
 
 - ATE: Average treatment effect
 - CATE: Conditional ATE
 - ATT: ATE on treated
 - ATU: ATE on untreated
+:::
 
+. . .
+
+::: {.nonincremental}
 Assumptions:
 
 - Ignorability $(Y(0), Y(1) \perp Z)~\vert~X$
 - Positivity $0 < \text{P}(Z=1~\vert~X) < 1$ for all $X$
 - $f$ correctly specified 
-
+:::
 
 
 ## Treatment effect BART
@@ -522,6 +547,10 @@ $$
 
 - $z$ becomes new variable to include
 - Use standard BART models [@chipman2010]
+
+- Model treatment effect changes in $X$
+  - Model selection
+  - Uncertainty quantification
 
 # `{tidytreatment}`
 
@@ -546,7 +575,7 @@ Helper:
 
 - `{bartCause}`: causal modelling
 - `{treatSens}`: sensitivity
-- `{tidytreatment}`: 
+- `{tidytreatment}`: me! 
 
 :::
 
@@ -560,6 +589,10 @@ Helper:
 - helper functions for treatment effect estimation
 - based on format from `{tidybayes}`
 - easy interface for Bayesian causal modelling
+
+. . .
+
+Martin O'Flaherty (UQ) + Sara Kalucza (Umeå) 
 
 ## 2016 Atlantic Causal Inference competition
 
@@ -645,6 +678,7 @@ fitted_posterior_draws <-  fitted_draws(bart_model,
 #| eval: false
 #| echo: true
 
+# NOTE: grouped by .row
 head(fitted_posterior_draws)
 
 ```
@@ -713,6 +747,7 @@ posterior_treatment <- # CATEs
 #| echo: true
 #| eval: false
 
+# print:
 head(posterior_treatment)
 
 ```
@@ -723,7 +758,7 @@ head(posterior_treatment)
 #| echo: false
 #| eval: true
 
-head(posterior_treatment %>% select(-.chain, -.iteration))
+posterior_treatment %>% select(-.chain, -.iteration) %>% head()
 
 ```
 
@@ -739,7 +774,7 @@ posterior_treatment %>% summarise(cte_hat = mean(cte)) %>%
   ggplot() +
   scale_x_continuous("Subject mean CTE") +
   geom_histogram(aes(x = cte_hat)) + 
-  theme_bw() 
+  theme_bw(base_size = 20) 
 ```
 
 ## Using `{tidytreatment}`: treatment effects
@@ -757,7 +792,7 @@ posterior_treatment %>% select(-z) %>%
   geom_interval(aes(x = .orow, y= cte, ymin = .lower, ymax = .upper)) +
   geom_point(aes(x = .orow, y = cte), shape = "circle open", alpha = 0.5) + 
   ylab("Median posterior CATE for each subject (95% CI)") +
-  theme_bw() + coord_flip() + scale_colour_brewer() +
+  theme_bw(base_size = 20) + coord_flip() + scale_colour_brewer() +
   theme(axis.title.y = element_blank(), 
         axis.text.y = element_blank(), 
         axis.ticks.y = element_blank(),
@@ -767,9 +802,10 @@ posterior_treatment %>% select(-z) %>%
 ## Using `{tidytreatment}`: average treatment effect
 
 ```{r tidytreatment-treatment-effect}
+#| echo: true
 
 posterior_treatment %>% 
-  ungroup() %>% 
+  ungroup() %>% # undo .row grouping
   summarise(ATE = mean(cte), sd = sd(cte))
 
 ```
@@ -789,11 +825,11 @@ Why? The regularisation that occurs in BART models may discount treatment assign
 
 ## Common support calculations
 
-Estimates of $Y(1) - Y(0) ~ \vert X = x$ may have higher uncertainty if $x$ is not observed for subjects with $Z=1$ and $Z=0$.
+- Estimates of $Y(1) - Y(0) ~ \vert X = x$ may have higher uncertainty if $x$ is not observed for subjects with $Z=1$ and $Z=0$.
 
-Problem of extrapolation. How far can we extrapolate? We want **common support**.
+- Problem of extrapolation. How far can we extrapolate? We want **common support**.
 
-Only include $Y(1) - Y(0) ~ \vert X = x$ in ATE calculations when $x$ has common support.
+- Only include $Y(1) - Y(0) ~ \vert X = x$ in ATE calculations when $x$ has common support.
 
 @hill2013assessing
 
@@ -807,20 +843,28 @@ $$
 
 ## `{tidytreatment}` compatibility
 
-- **CRAN** version supports `{BART}` and `{bartMachine}`
-- **GitHub** version support `{stan4bart}` and `{bartCause}`
+**CRAN**: <https://CRAN.R-project.org/package=tidytreatment>
+
+**GitHub**: <https://github.com/bonStats/tidytreatment>
+
+- CRAN version supports `{BART}` and `{bartMachine}`
+- GitHub version support `{stan4bart}` and `{bartCause}`
 - Support for `{bcf}` developed but on hold
 
-<https://CRAN.R-project.org/package=tidytreatment>
 
-<https://github.com/bonStats/tidytreatment>
+## Thanks
+
+:::{.nonincremental}
+ - QUEX Institute Accelerator Grant Scheme
+ - Ilke, Kim
+ - Institute for Social Science Research, UQ
+ 
+:::
 
 ## Contact
 
-Thanks!
-
 - [joshuajbon@gmail.com](mailto:joshuajbon@gmail.com)
 
-- [@bonStats](https://twitter.com/bonStats)
+- [twitter/bonStats](https://twitter.com/bonStats)
 
 ## References
