@@ -30,6 +30,8 @@ editor: visual
 - Treatment effect models
 - `{tidytreatment}`
 
+Aims: BART overview + useful packages in `R`
+
 # Additive regression trees
 
 ## Regression models
@@ -427,7 +429,7 @@ ggplot() +
 ```
 
 - Information about the parameters is encoded through the likelihood function of observed data
-- Prior + likelihood -> **posterior**
+- Prior $+$ likelihood $\Rightarrow$ <span style="color:blue;">posterior</span>
 
 ## Bayes rule and inference
 
@@ -439,36 +441,35 @@ $$
 - Prior distribution $p(\theta)$
 - Likelihood $p(y ~\vert~ \theta) = L(\theta~\vert~y)$
 - Marginal likelihood $p(y)$
-- 
 
 E.g. $\theta = [\beta, \sigma^2]$
 
 ## Computational inference
 
-The posterior is often intractable
-
-- $p(y)$ not available in closed form
-
-Rely on Monte Carlo approximations using
+We rely on Monte Carlo approximations
 
 $$
 \theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ y)
 $$
+of the posterior since $p(y)$ not available in closed form.
 
-for $i = 1, 2, \ldots, N$ for large $N$. 
+- Compute samples $i = 1, 2, \ldots, N$ for large $N$.
+- Markov chain Monte Carlo or sequential Monte Carlo
+- Most BART models estimated with Gibbs sampler [@chipman2010]
 
-- $\theta_i$ is generated using MCMC or SMC
 
 ## **Bayesian** Additive Regression Trees
 
 The parameters controlling $T_k$'s are unknown and assignment priors
 
-- Each tree is a weak learner [@chipman2010]
+- Each tree is a weak learner
   - Avoid overfitting
 - Uncertainty natural in the Bayesian paradigm
   - Parameter uncertainty represented by posterior draws
   
-Defaults in @chipman2010 work well empirically.
+Defaults in @chipman2010 work well empirically. 
+ 
+ - Except for binary outcomes [@dorie2016flexible]
   
 # Treatment effect models
 
@@ -483,6 +484,8 @@ In the absence of controlled randomized or natural experiments
 How do we estimate average treatment effects $\mathbb{E}[Y(1) - Y(0)]$?
 
 - Potential outcomes $Y(1)$, $Y(0)$
+
+@rubin1974estimating
 
 ## Causal modelling 
 
@@ -523,10 +526,10 @@ $$
 
 Modelling:
 
-- `{BART}`
+- `{BART}`: GLM
 - `{bcf}`
 - `{dbarts}`
-- `{stan4bart}`
+- `{stan4bart}`: random effects
 
 :::
 
@@ -534,9 +537,9 @@ Modelling:
 
 Helper:
 
-- `{bartCause}`
-- `{treatSens}`
-- `{tidytreatment}`
+- `{bartCause}`: causal modelling
+- `{treatSens}`: sensitivity
+- `{tidytreatment}`: 
 
 :::
 
@@ -557,8 +560,7 @@ Helper:
 library(aciccomp2016)
 sim <- dgp_2016(input_2016, 20, 1)
 
-data <- with(sim, data.frame(z = z, y = y, input_2016)) %>%
-    mutate(z = factor(z))
+data <- with(sim, data.frame(z = z, y = y, input_2016))
 
 ```
 
@@ -581,6 +583,7 @@ library(ggplot2)
 
 data %>% 
   filter(x_2 %in% c("C","D", "E"), y < 50, y > - 50) %>%
+  mutate(z = factor(z)) %>%
 ggplot() + 
   geom_boxplot(aes(y = y, x = z, group = z)) + 
   facet_wrap(~x_2, labeller = as_labeller( function(x) paste("x_2 =",x) ) ) +
@@ -611,7 +614,7 @@ library(BART)
 bart_model <- wbart(x.train = select(data,-y), 
                          y.train = pull(data, y),
                          nskip = 2000, # warmup
-                         ndpost = 250) # total samples
+                         ndpost = 250) # low total samples
 
 ```
 
@@ -652,6 +655,7 @@ head(fitted_posterior_draws)
 
 fitted_posterior_draws %>%
   left_join(interest_var, by = ".row") %>%
+  mutate(z = factor(z)) %>%
   filter(x_2 %in% c("C","D", "E")) %>% 
   ggplot() + 
   stat_halfeye(aes(x = z, y = fit)) + 
@@ -666,13 +670,26 @@ fitted_posterior_draws %>%
 
 ```{r tidytreatment-treatment}
 #| echo: true
+posterior_treatment <- # CATEs
+  treatment_effects(bart_model, treatment = "z", newdata = data)
+
+posterior_treatment
+
+```
+
+## Using `{tidytreatment}`: treatment effects
+
+```{r tidytreatment-treatment-plot}
+#| echo: true
 #| code-fold: true
 #| code-summary: "See code"
 #| cache: true
 
-
-
-
+posterior_treatment %>% summarise(cte_hat = mean(cte)) %>% 
+  ggplot() +
+  scale_x_continuous("Subject mean CTE") +
+  geom_histogram(aes(x = cte_hat)) + 
+  theme_bw() 
 ```
 
 
@@ -700,15 +717,18 @@ $$
 
 - **CRAN** version supports `{BART}` and `{bartMachine}`
 - **GitHub** version support `{stan4bart}` and `{bartCause}`
-- Support for `{bcf}` developed but complicated
+- Support for `{bcf}` developed but on hold
 
-# Thanks
+<https://CRAN.R-project.org/package=tidytreatment>
+
+<https://github.com/bonStats/tidytreatment>
 
 ## Contact
 
+Thanks!
 
 - [joshuajbon@gmail.com](mailto:joshuajbon@gmail.com)
 
-- <https://github.com/bonStats/tidytreatment>
-
 - [@bonStats](https://twitter.com/bonStats)
+
+## References
