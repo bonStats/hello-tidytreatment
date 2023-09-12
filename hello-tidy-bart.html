@@ -613,8 +613,8 @@ M, &amp; \text{Terminal node values} \\
 <p>Empirically, the sum of many shallow trees is better</p>
 <ul>
 <li>Each tree captures a different aspect of variation</li>
-<li>Helps to prevent overfitting</li>
-<li>Select which variables to include</li>
+<li>Select different variables to include</li>
+<li>Better approximation of smooth functions</li>
 </ul>
 </section>
 <section id="additive-regression-trees-1" class="slide level2">
@@ -684,10 +684,18 @@ M, &amp; \text{Terminal node values} \\
 </section>
 <section id="additive-regression-trees-2" class="slide level2">
 <h2>Additive regression trees</h2>
-<p><span class="math display">\[f(x; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k)\]</span></p>
+<p><span class="math display">\[\color{blue}{f(x; \beta)} = \sum_{k=1}^{K}g(x; T_k, M_k)\]</span></p>
 <ul>
 <li><span class="math inline">\(T_k\)</span>: structure and decision rules <span class="math inline">\(k\)</span>th tree</li>
 <li><span class="math inline">\(M_k\)</span>: mean values in leaves of <span class="math inline">\(k\)</span>th tree</li>
+</ul>
+</section>
+<section id="additive-regression-trees-3" class="slide level2">
+<h2>Additive regression trees</h2>
+<p>How to proceed with parameter inference?</p>
+<ul>
+<li>Uncertainty quantification</li>
+<li>Prevent overfitting</li>
 </ul>
 </section></section>
 <section>
@@ -709,31 +717,31 @@ M, &amp; \text{Terminal node values} \\
 
 <img data-src="hello-tidy-bart_files/figure-revealjs/post-dist-1.png" width="960" class="r-stretch"><ul>
 <li>Information about the parameters is encoded through the likelihood function of observed data</li>
-<li>Update prior information with likelihood to gain <strong>posterior</strong></li>
+<li>Prior + likelihood -&gt; <strong>posterior</strong></li>
 </ul>
 </section>
 <section id="bayes-rule-and-inference" class="slide level2">
 <h2>Bayes rule and inference</h2>
-<p><span class="math display">\[
-p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
+<p>The posterior distribution <span class="math inline">\(p(\theta ~\vert~ y)\)</span> is determined by Bayes rule <span class="math display">\[
+p(\theta ~\vert~ y) = \frac{p(y ~\vert~ \theta)p(\theta)}{p(y)}
 \]</span></p>
 <ul>
-<li>E.g. <span class="math inline">\(\theta = [\beta, \sigma^2]\)</span></li>
 <li>Prior distribution <span class="math inline">\(p(\theta)\)</span></li>
-<li>Likelihood <span class="math inline">\(p(D ~\vert~ \theta) = L(\theta~\vert~D)\)</span></li>
-<li>Marginal likelihood <span class="math inline">\(p(D)\)</span></li>
-<li>Posterior distribution <span class="math inline">\(p(\theta ~\vert~ D)\)</span></li>
+<li>Likelihood <span class="math inline">\(p(y ~\vert~ \theta) = L(\theta~\vert~y)\)</span></li>
+<li>Marginal likelihood <span class="math inline">\(p(y)\)</span></li>
+<li></li>
 </ul>
+<p>E.g. <span class="math inline">\(\theta = [\beta, \sigma^2]\)</span></p>
 </section>
 <section id="computational-inference" class="slide level2">
 <h2>Computational inference</h2>
 <p>The posterior is often intractable</p>
 <ul>
-<li>the marginal likelihood <span class="math inline">\(p(D)\)</span> is not available in closed form</li>
+<li><span class="math inline">\(p(y)\)</span> not available in closed form</li>
 </ul>
 <p>Rely on Monte Carlo approximations using</p>
 <p><span class="math display">\[
-\theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ D)
+\theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ y)
 \]</span></p>
 <p>for <span class="math inline">\(i = 1, 2, \ldots, N\)</span> for large <span class="math inline">\(N\)</span>.</p>
 <ul>
@@ -744,9 +752,16 @@ p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
 <h2><strong>Bayesian</strong> Additive Regression Trees</h2>
 <p>The parameters controlling <span class="math inline">\(T_k\)</span>’s are unknown and assignment priors</p>
 <ul>
-<li>See <span class="citation" data-cites="chipman2010">(<a href="#/contact" role="doc-biblioref" onclick="">Chipman, George, and McCulloch 2010</a>)</span></li>
+<li>Each tree is a weak learner <span class="citation" data-cites="chipman2010">(<a href="#/contact" role="doc-biblioref" onclick="">Chipman, George, and McCulloch 2010</a>)</span>
+<ul>
+<li>Avoid overfitting</li>
+</ul></li>
+<li>Uncertainty natural in the Bayesian paradigm
+<ul>
+<li>Parameter uncertainty represented by posterior draws</li>
+</ul></li>
 </ul>
-<p>BART Mc</p>
+<p>Defaults in <span class="citation" data-cites="chipman2010">Chipman, George, and McCulloch (<a href="#/contact" role="doc-biblioref" onclick="">2010</a>)</span> work well empirically.</p>
 </section></section>
 <section>
 <section id="treatment-effect-models" class="title-slide slide level1 center">
@@ -762,10 +777,21 @@ p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
 <li>Observed confounders <span class="math inline">\(X\)</span></li>
 </ul>
 <p>How do we estimate average treatment effects <span class="math inline">\(\mathbb{E}[Y(1) - Y(0)]\)</span>?</p>
+<ul>
+<li>Potential outcomes <span class="math inline">\(Y(1)\)</span>, <span class="math inline">\(Y(0)\)</span></li>
+</ul>
 </section>
 <section id="causal-modelling-1" class="slide level2">
 <h2>Causal modelling</h2>
 <p><span class="math display">\[Y = f(X, Z; \beta) + \varepsilon\]</span></p>
+<p>Estimate conditional potential outcomes</p>
+<ul>
+<li><span class="math inline">\({\hat{Y}} (z)~\vert~X = \hat{f} (X,z)\)</span> for <span class="math inline">\(z\in \{0,1\}\)</span></li>
+</ul>
+<p>Average over <span class="math inline">\(X\)</span> for <span class="math inline">\(\hat{Y}(z)\)</span> unconditional</p>
+</section>
+<section id="causal-modelling-2" class="slide level2">
+<h2>Causal modelling</h2>
 <p>Assumptions:</p>
 <ul>
 <li>Ignorability <span class="math inline">\((Y(0), Y(1) \perp Z)~\vert~X\)</span></li>
@@ -777,14 +803,11 @@ p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
 <h2>Treatment effect BART</h2>
 <p><span class="math display">\[
 f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
-\]</span> Using standard BART models <span class="citation" data-cites="chipman2010">(<a href="#/contact" role="doc-biblioref" onclick="">Chipman, George, and McCulloch 2010</a>)</span> with <span class="math inline">\(z\)</span> as a variable</p>
-</section>
-<section id="bayesian-causal-forests" class="slide level2">
-<h2>Bayesian causal forests</h2>
-<p><span class="math display">\[
-f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^\prime, M_k^\prime)
 \]</span></p>
-<p>REF</p>
+<ul>
+<li><span class="math inline">\(z\)</span> becomes new variable to include</li>
+<li>Use standard BART models <span class="citation" data-cites="chipman2010">(<a href="#/contact" role="doc-biblioref" onclick="">Chipman, George, and McCulloch 2010</a>)</span></li>
+</ul>
 </section></section>
 <section>
 <section id="tidytreatment" class="title-slide slide level1 center">
@@ -828,11 +851,11 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^
 <h2>2016 Atlantic Causal Inference competition</h2>
 <ul>
 <li><p>Hypothetical observational data</p></li>
-<li><p><span class="math inline">\(X\)</span> = 58 confounders from Collaborative Perinatal Project (Niswander and Gordon, 1972)</p></li>
+<li><p><span class="math inline">\(X\)</span> = 58 confounders from Collaborative Perinatal Project <span class="citation" data-cites="niswander1972women">(<a href="#/contact" role="doc-biblioref" onclick="">Niswander and Gordon 1972</a>)</span></p></li>
 <li><p><span class="math inline">\(Z\)</span> simulated based on <span class="math inline">\(X\)</span></p></li>
 <li><p><span class="math inline">\(Y\)</span> simulated based on <span class="math inline">\(X,Z\)</span></p></li>
 </ul>
-<p>REF</p>
+<p><span class="citation" data-cites="dorie2019comp">Dorie et al. (<a href="#/contact" role="doc-biblioref" onclick="">2019</a>)</span></p>
 </section>
 <section id="heterogenous-treatment-effects" class="slide level2">
 <h2>Heterogenous treatment effects</h2>
@@ -876,7 +899,7 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^
 </section>
 <section id="using-tidytreatment-plotting-with-ggdist" class="slide level2">
 <h2>Using <code>{tidytreatment}</code>: plotting with <code>{ggdist}</code></h2>
-<div class="cell">
+<div class="cell" data-hash="hello-tidy-bart_cache/revealjs/tidytreatment-ggdist_8a0f34da2c0aa18c0ef7136d1118a273">
 <details>
 <summary>See code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>  interest_var <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> </span>
@@ -890,11 +913,42 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^
 <span id="cb4-9"><a href="#cb4-9"></a>  <span class="fu">stat_halfeye</span>(<span class="fu">aes</span>(<span class="at">x =</span> z, <span class="at">y =</span> fit)) <span class="sc">+</span> </span>
 <span id="cb4-10"><a href="#cb4-10"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>x_2, <span class="at">labeller =</span> <span class="fu">as_labeller</span>( <span class="cf">function</span>(x) <span class="fu">paste</span>(<span class="st">"x_2 ="</span>,x) ), <span class="at">scales =</span> <span class="st">"free"</span>) <span class="sc">+</span></span>
 <span id="cb4-11"><a href="#cb4-11"></a>  <span class="fu">xlab</span>(<span class="st">"Treatment (z)"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Posterior predicted value"</span>) <span class="sc">+</span></span>
-<span id="cb4-12"><a href="#cb4-12"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Effect of treatment with 'x_2' on posterior fitted values"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-12"><a href="#cb4-12"></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">20</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Effect of treatment with 'x_2' on posterior fitted values"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 
 </div>
 <img data-src="hello-tidy-bart_files/figure-revealjs/tidytreatment-ggdist-1.png" width="960" class="r-stretch"></section></section>
+<section>
+<section id="more-bart-for-causal-models" class="title-slide slide level1 center">
+<h1>More BART for causal models</h1>
+
+</section>
+<section id="bart-with-estimated-propensity-score" class="slide level2">
+<h2>BART with estimated propensity score</h2>
+<ul>
+<li>Estimate propensity score for treatment assignment: <span class="math inline">\(\hat{p}\)</span></li>
+<li>Include</li>
+</ul>
+</section>
+<section id="common-support" class="slide level2">
+<h2>Common support</h2>
+<p><span class="citation" data-cites="hill2013assessing">Hill and Su (<a href="#/contact" role="doc-biblioref" onclick="">2013</a>)</span></p>
+</section>
+<section id="bayesian-causal-forests" class="slide level2">
+<h2>Bayesian causal forests</h2>
+<p><span class="math display">\[
+f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^\prime, M_k^\prime)
+\]</span></p>
+<p><span class="citation" data-cites="hahn2020bayesian">Hahn, Murray, and Carvalho (<a href="#/contact" role="doc-biblioref" onclick="">2020</a>)</span></p>
+</section>
+<section id="tidytreatment-compatibility" class="slide level2">
+<h2><code>{tidytreatment}</code> compatibility</h2>
+<ul>
+<li><strong>CRAN</strong> version supports <code>{BART}</code> and <code>{bartMachine}</code></li>
+<li><strong>GitHub</strong> version support <code>{stan4bart}</code> and <code>{bartCause}</code></li>
+<li>Support for <code>{bcf}</code> developed but complicated</li>
+</ul>
+</section></section>
 <section>
 <section id="thanks" class="title-slide slide level1 center">
 <h1>Thanks</h1>
@@ -913,6 +967,18 @@ f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-chipman2010" class="csl-entry" role="listitem">
 Chipman, Hugh A., Edward I. George, and Robert E. McCulloch. 2010. <span>“<span class="nocase">BART: Bayesian additive regression trees</span>.”</span> <em>The Annals of Applied Statistics</em> 4 (1): 266–98. <a href="https://doi.org/10.1214/09-AOAS285">https://doi.org/10.1214/09-AOAS285</a>.
+</div>
+<div id="ref-dorie2019comp" class="csl-entry" role="listitem">
+Dorie, Vincent, Jennifer Hill, Uri Shalit, Marc Scott, and Dan Cervone. 2019. <span>“<span class="nocase">Automated versus Do-It-Yourself Methods for Causal Inference: Lessons Learned from a Data Analysis Competition</span>.”</span> <em>Statistical Science</em> 34 (1): 43–68. <a href="https://doi.org/10.1214/18-STS667">https://doi.org/10.1214/18-STS667</a>.
+</div>
+<div id="ref-hahn2020bayesian" class="csl-entry" role="listitem">
+Hahn, P Richard, Jared S Murray, and Carlos M Carvalho. 2020. <span>“Bayesian Regression Tree Models for Causal Inference: Regularization, Confounding, and Heterogeneous Effects (with Discussion).”</span> <em>Bayesian Analysis</em> 15 (3): 965–1056.
+</div>
+<div id="ref-hill2013assessing" class="csl-entry" role="listitem">
+Hill, Jennifer, and Yu-Sung Su. 2013. <span>“Assessing Lack of Common Support in Causal Inference Using Bayesian Nonparametrics: Implications for Evaluating the Effect of Breastfeeding on Children’s Cognitive Outcomes.”</span> <em>The Annals of Applied Statistics</em>, 1386–1420.
+</div>
+<div id="ref-niswander1972women" class="csl-entry" role="listitem">
+Niswander, Kenneth R, and Myron Gordon. 1972. <em>The Women and Their Pregnancies: The Collaborative Perinatal Study of the National Institute of Neurological Diseases and Stroke</em>. Vol. 73. 379. National Institute of Health.
 </div>
 </div>
 </section></section>

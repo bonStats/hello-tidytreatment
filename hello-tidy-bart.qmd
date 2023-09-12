@@ -306,8 +306,8 @@ More branches can result in
 Empirically, the sum of many shallow trees is better
 
 - Each tree captures a different aspect of variation
-- Helps to prevent overfitting
-- Select which variables to include
+- Select different variables to include
+- Better approximation of smooth functions
 
 
 ## Additive regression trees
@@ -379,10 +379,18 @@ graph TB
 
 ## Additive regression trees
 
-$$f(x; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k)$$
+$$\color{blue}{f(x; \beta)} = \sum_{k=1}^{K}g(x; T_k, M_k)$$
 
 - $T_k$: structure and decision rules $k$th tree
 - $M_k$: mean values in leaves of $k$th tree
+
+## Additive regression trees
+
+How to proceed with parameter inference?
+
+- Uncertainty quantification
+- Prevent overfitting
+
 
 # Bayesian statistics
 
@@ -394,7 +402,7 @@ ggplot() +
   geom_function(fun = dnorm, args = list(mean = 1, sd = 0.5), xlim = c(-2,4)) +
   scale_y_continuous("", labels = NULL) +
   scale_x_continuous(expression(beta)) +
-  theme_bw()
+  theme_bw(base_size = 20)
 
 ```
 
@@ -414,35 +422,37 @@ ggplot() +
              shape = 4, size = 4) +
   scale_y_continuous("", labels = NULL) +
   scale_x_continuous(expression(beta)) +
-  theme_bw()
+  theme_bw(base_size = 20)
 
 ```
 
 - Information about the parameters is encoded through the likelihood function of observed data
-- Update prior information with likelihood to gain **posterior**
+- Prior + likelihood -> **posterior**
 
 ## Bayes rule and inference
 
+The posterior distribution $p(\theta ~\vert~ y)$ is determined by Bayes rule
 $$
-p(\theta ~\vert~ D) = \frac{p(D ~\vert~ \theta)p(\theta)}{p(D)}
+p(\theta ~\vert~ y) = \frac{p(y ~\vert~ \theta)p(\theta)}{p(y)}
 $$
 
-- E.g. $\theta = [\beta, \sigma^2]$
 - Prior distribution $p(\theta)$
-- Likelihood $p(D ~\vert~ \theta) = L(\theta~\vert~D)$
-- Marginal likelihood $p(D)$
-- Posterior distribution $p(\theta ~\vert~ D)$
+- Likelihood $p(y ~\vert~ \theta) = L(\theta~\vert~y)$
+- Marginal likelihood $p(y)$
+- 
+
+E.g. $\theta = [\beta, \sigma^2]$
 
 ## Computational inference
 
 The posterior is often intractable
 
-- the marginal likelihood $p(D)$ is not available in closed form
+- $p(y)$ not available in closed form
 
 Rely on Monte Carlo approximations using
 
 $$
-\theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ D)
+\theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ y)
 $$
 
 for $i = 1, 2, \ldots, N$ for large $N$. 
@@ -453,10 +463,13 @@ for $i = 1, 2, \ldots, N$ for large $N$.
 
 The parameters controlling $T_k$'s are unknown and assignment priors
 
-- See [@chipman2010]
-
-BART Mc
-
+- Each tree is a weak learner [@chipman2010]
+  - Avoid overfitting
+- Uncertainty natural in the Bayesian paradigm
+  - Parameter uncertainty represented by posterior draws
+  
+Defaults in @chipman2010 work well empirically.
+  
 # Treatment effect models
 
 ## Causal modelling
@@ -469,9 +482,19 @@ In the absence of controlled randomized or natural experiments
 
 How do we estimate average treatment effects $\mathbb{E}[Y(1) - Y(0)]$?
 
+- Potential outcomes $Y(1)$, $Y(0)$
+
 ## Causal modelling 
 
 $$Y = f(X, Z; \beta) + \varepsilon$$
+
+Estimate conditional potential outcomes 
+
+- ${\hat{Y}} (z)~\vert~X = \hat{f} (X,z)$ for $z\in \{0,1\}$
+
+Average over $X$ for $\hat{Y}(z)$ unconditional
+
+## Causal modelling 
 
 Assumptions:
 
@@ -486,15 +509,9 @@ Assumptions:
 $$
 f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
 $$
-Using standard BART models [@chipman2010] with $z$ as a variable
 
-## Bayesian causal forests
-
-$$
-f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^\prime, M_k^\prime)
-$$
-
-REF
+- $z$ becomes new variable to include
+- Use standard BART models [@chipman2010]
 
 # `{tidytreatment}`
 
@@ -532,6 +549,7 @@ Helper:
    - easy plotting with `{ggplot2}` via `{ggdist}`
 - helper functions for treatment effect estimation
 - based on format from `{tidybayes}`
+- easy interface for Bayesian causal modelling
 
 ## 2016 Atlantic Causal Inference competition
 
@@ -546,12 +564,11 @@ data <- with(sim, data.frame(z = z, y = y, input_2016)) %>%
 
 - Hypothetical observational data
 
-- $X$ = 58 confounders from Collaborative Perinatal Project
-(Niswander and Gordon, 1972)
+- $X$ = 58 confounders from Collaborative Perinatal Project [@niswander1972women]
 - $Z$ simulated based on $X$
 - $Y$ simulated based on $X,Z$
 
-REF
+@dorie2019comp
 
 ## Heterogenous treatment effects
 
@@ -568,7 +585,7 @@ ggplot() +
   geom_boxplot(aes(y = y, x = z, group = z)) + 
   facet_wrap(~x_2, labeller = as_labeller( function(x) paste("x_2 =",x) ) ) +
   scale_x_discrete() +
-  theme_bw()
+  theme_bw(base_size = 20)
 ```
 
 
@@ -640,10 +657,50 @@ fitted_posterior_draws %>%
   stat_halfeye(aes(x = z, y = fit)) + 
   facet_wrap(~x_2, labeller = as_labeller( function(x) paste("x_2 =",x) ), scales = "free") +
   xlab("Treatment (z)") + ylab("Posterior predicted value") +
-  theme_bw() + ggtitle("Effect of treatment with 'x_2' on posterior fitted values")
+  theme_bw(base_size = 20) + ggtitle("Effect of treatment with 'x_2' on posterior fitted values")
 
 ```
 
+
+## Using `{tidytreatment}`: treatment effects
+
+```{r tidytreatment-treatment}
+#| echo: true
+#| code-fold: true
+#| code-summary: "See code"
+#| cache: true
+
+
+
+
+```
+
+
+# More BART for causal models
+
+## BART with estimated propensity score
+
+- Estimate propensity score for treatment assignment: $\hat{p}$
+- Include 
+
+
+## Common support
+
+@hill2013assessing
+
+## Bayesian causal forests
+
+$$
+f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^\prime, M_k^\prime)
+$$
+
+@hahn2020bayesian
+
+## `{tidytreatment}` compatibility
+
+- **CRAN** version supports `{BART}` and `{bartMachine}`
+- **GitHub** version support `{stan4bart}` and `{bartCause}`
+- Support for `{bcf}` developed but complicated
 
 # Thanks
 
