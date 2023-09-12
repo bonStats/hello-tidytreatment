@@ -499,6 +499,13 @@ Average over $X$ for $\hat{Y}(z)$ unconditional
 
 ## Causal modelling 
 
+Calculate quantities such as:
+
+- ATE: Average treatment effect
+- CATE: Conditional ATE
+- ATT: ATE on treated
+- ATU: ATE on untreated
+
 Assumptions:
 
 - Ignorability $(Y(0), Y(1) \perp Z)~\vert~X$
@@ -632,14 +639,25 @@ fitted_posterior_draws <-  fitted_draws(bart_model,
 
 ```
 
-##  Using `{tidytreatment}`: 'tidy' fitted values
+##  `{tidytreatment}`: 'tidy' fitted values
 
-```{r tidytreatment-pdraws}
+```{r tidytreatment-pdraws-1}
+#| eval: false
 #| echo: true
 
 head(fitted_posterior_draws)
 
 ```
+
+. . .
+
+```{r tidytreatment-pdraws-2}
+#| echo: false
+
+head(fitted_posterior_draws)
+
+```
+
 
 ## Using `{tidytreatment}`: plotting with `{ggdist}` 
 
@@ -659,21 +677,53 @@ fitted_posterior_draws %>%
   filter(x_2 %in% c("C","D", "E")) %>% 
   ggplot() + 
   stat_halfeye(aes(x = z, y = fit)) + 
-  facet_wrap(~x_2, labeller = as_labeller( function(x) paste("x_2 =",x) ), scales = "free") +
-  xlab("Treatment (z)") + ylab("Posterior predicted value") +
-  theme_bw(base_size = 20) + ggtitle("Effect of treatment with 'x_2' on posterior fitted values")
+  facet_wrap(~x_2, 
+             labeller = as_labeller( function(x) paste("x_2 =",x) ), 
+             scales = "free") +
+  xlab("Treatment (z)") + 
+  ylab("Posterior predicted value") +
+  theme_bw(base_size = 20) + 
+  ggtitle("Effect of treatment with 'x_2' on posterior fitted values")
 
 ```
 
 
 ## Using `{tidytreatment}`: treatment effects
 
-```{r tidytreatment-treatment}
+```{r tidytreatment-treatment-run-1}
+#| include: false
+posterior_treatment <- # CATEs
+  treatment_effects(bart_model, 
+                    treatment = "z", 
+                    newdata = data)
+
+```
+
+```{r tidytreatment-treatment-run-2}
 #| echo: true
+#| eval: false
 posterior_treatment <- # CATEs
   treatment_effects(bart_model, treatment = "z", newdata = data)
 
-posterior_treatment
+```
+
+## Using `{tidytreatment}`: treatment effects
+
+```{r tidytreatment-treatment-1}
+#| echo: true
+#| eval: false
+
+head(posterior_treatment)
+
+```
+
+. . .
+
+```{r tidytreatment-treatment-2}
+#| echo: false
+#| eval: true
+
+head(posterior_treatment %>% select(-.chain, -.iteration))
 
 ```
 
@@ -692,16 +742,58 @@ posterior_treatment %>% summarise(cte_hat = mean(cte)) %>%
   theme_bw() 
 ```
 
+## Using `{tidytreatment}`: treatment effects
+
+```{r tidytreatment-treatment-plot-2}
+#| echo: true
+#| code-fold: true
+#| code-summary: "See code"
+#| cache: true
+
+posterior_treatment %>% select(-z) %>% 
+  point_interval() %>%
+  arrange(cte) %>% mutate(.orow = 1:n()) %>% 
+  ggplot() + 
+  geom_interval(aes(x = .orow, y= cte, ymin = .lower, ymax = .upper)) +
+  geom_point(aes(x = .orow, y = cte), shape = "circle open", alpha = 0.5) + 
+  ylab("Median posterior CATE for each subject (95% CI)") +
+  theme_bw() + coord_flip() + scale_colour_brewer() +
+  theme(axis.title.y = element_blank(), 
+        axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        legend.position = "none")
+```
+
+## Using `{tidytreatment}`: average treatment effect
+
+```{r tidytreatment-treatment-effect}
+
+posterior_treatment %>% 
+  ungroup() %>% 
+  summarise(ATE = mean(cte), sd = sd(cte))
+
+```
 
 # More BART for causal models
 
 ## BART with estimated propensity score
 
-- Estimate propensity score for treatment assignment: $\hat{p}$
-- Include 
+@hahn2020bayesian propose using propensity score in BART model, roughly:
 
+1. Fit variable selection model (VS): Regress outcome against variables (excluding treatment)
+2. Select a subset of covariate from the VS model which are most associated with the outcome
+3. Fit a propensity score model (PS): A probit/logit model estimating the propensity score using only the selected covariates
+4. Fit the treatment effect model (TE): Using the original covariates and propensity score estimate
 
-## Common support
+Why? The regularisation that occurs in BART models may discount treatment assignment estimation 
+
+## Common support calculations
+
+Estimates of $Y(1) - Y(0) ~ \vert X = x$ may have higher uncertainty if $x$ is not observed for subjects with $Z=1$ and $Z=0$.
+
+Problem of extrapolation. How far can we extrapolate? We want **common support**.
+
+Only include $Y(1) - Y(0) ~ \vert X = x$ in ATE calculations when $x$ has common support.
 
 @hill2013assessing
 
