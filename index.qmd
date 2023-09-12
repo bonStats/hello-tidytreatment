@@ -1,0 +1,714 @@
+---
+title: "Tidy methods for BART models using `{tidytreatment}`"
+author: "Joshua J Bon"
+institute: "CEREMADE, Université Paris-Dauphine"
+bibliography: refs.bib
+format:
+  revealjs: 
+    theme: default
+    df-print: paged
+editor: visual
+---
+
+## About me
+
+- **Statistician** Develop statistical algorithms
+
+- **Programmer** (Attempt) to write useful software
+
+- **Data scientist** Design/implement statistical analyses
+
+. . .
+
+- PhD and PostDoc at QUT, Brisbane
+- PostDoc at Paris-Dauphine PSL
+
+## Talk overview
+
+- ART: Additive Regression Tree
+- B: Bayesian statistics
+- Treatment effect models
+- `{tidytreatment}`
+
+# Additive regression trees
+
+## Regression models
+
+```{r reg-setup}
+library(ggplot2)
+library(dplyr)
+library(rpart)
+library(rpart.plot)
+set.seed(101)
+x <- runif(30)
+y <- x^2 + rnorm(length(x), sd = 0.1)
+x <- x*100
+y <- y*100
+xydata <- tibble(x=x,y=y)
+```
+
+```{r linear-plot}
+
+ggplot(xydata, aes(x=x,y=y)) +
+  geom_point() + 
+  geom_smooth(method = lm, se = FALSE) +
+  theme_bw()
+
+```
+
+
+## Linear regression
+
+$$
+Y = \beta \cdot X + \varepsilon
+$$
+
+$$
+\varepsilon \sim \text{N}(0,\sigma^2)
+$$
+When $p$ large, many variables and interaction to consider
+
+- How to do model selection?
+- What if relationship is not linear?
+
+
+## Nonlinear regression
+
+$$
+Y = \color{blue}{f(X; \beta)} + \varepsilon_i
+$$
+
+$$
+\varepsilon \sim \text{N}(0,\sigma^2)
+$$
+
+- What to choose for $f$?
+- Parsimonious and flexible
+
+## What about binary trees?
+
+```{mermaid}
+
+graph TB
+    A("R₁")---B("R₂")
+    A---C("R₃")
+    B---D("R₄")
+    B---E("R₅")
+    C---F("R₆")
+    C---G("R₇")
+    D---H("m₁")
+    D---I("m₂")
+    E---J("m₃")
+    E---K("m₄")
+    F---L("m₅")
+    F---M("m₆")
+    G---N("m₇")
+    G---O("m₈")
+
+```
+
+$$
+\color{blue}{f(x; \beta)} = \text{piecewise constant}
+$$
+
+$$
+\color{blue}{\beta} = \begin{cases}
+T, & \text{Tree structure} \\
+M, & \text{Terminal node values} \\
+\end{cases}
+$$
+
+## Trees are flexible
+
+```{r tree-plot-setup}
+
+minvals <- c(30, 15, 10, 2)
+
+```
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r pconstant-plot-1}
+#| fig-width: 10
+#| fig-height: 8
+ggplot(xydata, aes(x=x,y=y)) +
+  geom_point() + 
+  geom_smooth(method = rpart, se = FALSE, 
+              method.args = list(
+                control = rpart.control(
+                  minsplit = minvals[1],
+                  minbucket = minvals[1]))) +
+  theme_bw(base_size = 20)
+
+```
+
+
+:::
+
+::: {.column width="50%"}
+
+```{r pconstant-tree-1}
+#| fig-width: 10
+#| fig-height: 8
+model1 <- rpart(y ~ x, data=xydata, 
+                     control = rpart.control(
+                  minsplit = minvals[1],
+                  minbucket = minvals[1]))
+
+rpart.plot(model1, cex = 1.75)
+
+```
+
+:::
+
+::::
+
+## Trees are flexible
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r pconstant-plot-2}
+#| fig-width: 10
+#| fig-height: 8
+ggplot(xydata, aes(x=x,y=y)) +
+  geom_point() + 
+  geom_smooth(method = rpart, se = FALSE, 
+              method.args = list(
+                control = rpart.control(
+                  minsplit = minvals[2],
+                  minbucket = minvals[2]))) +
+  theme_bw() +
+  theme_bw(base_size = 20)
+
+```
+
+
+
+:::
+
+::: {.column width="50%"}
+
+```{r pconstant-tree-2}
+#| fig-width: 10
+#| fig-height: 8
+model2 <- rpart(y ~ x, data=xydata, 
+                     control = rpart.control(
+                  minsplit = minvals[2],
+                  minbucket = minvals[2]))
+
+rpart.plot(model2, cex = 1.75)
+
+```
+
+:::
+
+::::
+
+## Trees are flexible
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r pconstant-plot-3}
+#| fig-width: 10
+#| fig-height: 8
+ggplot(xydata, aes(x=x,y=y)) +
+  geom_point() + 
+  geom_smooth(method = rpart, se = FALSE, 
+              method.args = list(
+                control = rpart.control(
+                  minsplit = minvals[3],
+                  minbucket = minvals[3]))) +
+  theme_bw() +
+  theme_bw(base_size = 20)
+
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r pconstant-tree-3}
+#| fig-width: 10
+#| fig-height: 8
+model3 <- rpart(y ~ x, data=xydata, 
+                     control = rpart.control(
+                  minsplit = minvals[3],
+                  minbucket = minvals[3]))
+
+rpart.plot(model3, cex = 1.75)
+
+```
+
+:::
+
+::::
+
+## Trees are flexible
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```{r pconstant-plot-4}
+#| fig-width: 10
+#| fig-height: 8
+ggplot(xydata, aes(x=x,y=y)) +
+  geom_point() + 
+  geom_smooth(method = rpart, se = FALSE, 
+              method.args = list(
+                control = rpart.control(
+                  minsplit = minvals[4],
+                  minbucket = minvals[4]))) +
+  theme_bw() +
+  theme_bw(base_size = 20)
+
+```
+
+:::
+
+::: {.column width="50%"}
+
+```{r pconstant-tree-4}
+#| fig-width: 10
+#| fig-height: 8
+model4 <- rpart(y ~ x, data=xydata, 
+                     control = rpart.control(
+                  minsplit = minvals[4],
+                  minbucket = minvals[4]))
+
+rpart.plot(model4, cex = 1.75)
+
+```
+
+:::
+
+::::
+
+## Trees model interactions
+
+{{< pdf figs/regression-tree-diagram.pdf height=350 width=900 >}}
+
+## Tree complexity
+
+More branches can result in
+
+- Better approximation of smooth functions (same $x_i$)
+- More interaction effects (different $x_i$)
+
+## Tree complexity
+
+Empirically, the sum of many shallow trees is better
+
+- Each tree captures a different aspect of variation
+- Select different variables to include
+- Better approximation of smooth functions
+
+
+## Additive regression trees
+
+:::: {.columns}
+
+::: {.column width="14%"}
+
+$$\color{blue}{f(x;\beta)} =$$
+
+:::
+
+::: {.column width="18%"}
+```{mermaid g1}
+graph TB
+    A(( ))---B(( ))
+    A---C(( ))
+    B---D(( ))
+    B---E(( ))
+    C---F(( ))
+    C---G(( ))
+```
+:::
+
+::: {.column width="8%"}
+
+$$+$$
+:::
+
+::: {.column width="18%"}
+```{mermaid g2}
+graph TB
+    J(( ))---K(( ))
+    J---L(( ))
+    L---M(( ))
+    L---N(( ))
+```
+:::
+
+::: {.column width="8%"}
+
+$$+$$
+:::
+
+::: {.column width="8%"}
+
+$$\cdots$$
+:::
+
+::: {.column width="8%"}
+
+$$+$$
+
+:::
+
+::: {.column width="18%"}
+```{mermaid g3}
+graph TB
+    A(( ))---B(( ))
+    A---C(( ))
+    C---F(( ))
+    C---G(( ))
+    G---H(( ))
+    G---I(( ))
+```
+:::
+
+::::
+
+## Additive regression trees
+
+$$\color{blue}{f(x; \beta)} = \sum_{k=1}^{K}g(x; T_k, M_k)$$
+
+- $T_k$: structure and decision rules $k$th tree
+- $M_k$: mean values in leaves of $k$th tree
+
+## Additive regression trees
+
+How to proceed with parameter inference?
+
+- Uncertainty quantification
+- Prevent overfitting
+
+
+# Bayesian statistics
+
+## Parameters and priors
+
+```{r prior-dist}
+
+ggplot() + 
+  geom_function(fun = dnorm, args = list(mean = 1, sd = 0.5), xlim = c(-2,4)) +
+  scale_y_continuous("", labels = NULL) +
+  scale_x_continuous(expression(beta)) +
+  theme_bw(base_size = 20)
+
+```
+
+- Unknown parameters, $\beta$, are random variables
+- Represent uncertainty with probability distributions
+- Specify the **prior** distribution before observing the data
+
+
+## Observed data and likelihoods
+
+```{r post-dist}
+
+ggplot() + 
+  geom_function(fun = dnorm, args = list(mean = 1, sd = 0.5), xlim = c(-2,4)) +
+  geom_function(fun = dnorm, args = list(mean = 2, sd = 0.25), xlim = c(-2,4), color = "blue", n = 201) +
+  geom_point(aes(x,y), data = tibble(x=c(1.7,1.9,2.4,2.6), y = c(0,0,0,0)), 
+             shape = 4, size = 4) +
+  scale_y_continuous("", labels = NULL) +
+  scale_x_continuous(expression(beta)) +
+  theme_bw(base_size = 20)
+
+```
+
+- Information about the parameters is encoded through the likelihood function of observed data
+- Prior + likelihood -> **posterior**
+
+## Bayes rule and inference
+
+The posterior distribution $p(\theta ~\vert~ y)$ is determined by Bayes rule
+$$
+p(\theta ~\vert~ y) = \frac{p(y ~\vert~ \theta)p(\theta)}{p(y)}
+$$
+
+- Prior distribution $p(\theta)$
+- Likelihood $p(y ~\vert~ \theta) = L(\theta~\vert~y)$
+- Marginal likelihood $p(y)$
+- 
+
+E.g. $\theta = [\beta, \sigma^2]$
+
+## Computational inference
+
+The posterior is often intractable
+
+- $p(y)$ not available in closed form
+
+Rely on Monte Carlo approximations using
+
+$$
+\theta_i \overset{\text{approx}}{\sim} p(\theta ~\vert~ y)
+$$
+
+for $i = 1, 2, \ldots, N$ for large $N$. 
+
+- $\theta_i$ is generated using MCMC or SMC
+
+## **Bayesian** Additive Regression Trees
+
+The parameters controlling $T_k$'s are unknown and assignment priors
+
+- Each tree is a weak learner [@chipman2010]
+  - Avoid overfitting
+- Uncertainty natural in the Bayesian paradigm
+  - Parameter uncertainty represented by posterior draws
+  
+Defaults in @chipman2010 work well empirically.
+  
+# Treatment effect models
+
+## Causal modelling
+
+In the absence of controlled randomized or natural experiments 
+
+- Outcome $Y$
+- Treatment variable $Z \in \{0,1\}$
+- Observed confounders $X$
+
+How do we estimate average treatment effects $\mathbb{E}[Y(1) - Y(0)]$?
+
+- Potential outcomes $Y(1)$, $Y(0)$
+
+## Causal modelling 
+
+$$Y = f(X, Z; \beta) + \varepsilon$$
+
+Estimate conditional potential outcomes 
+
+- ${\hat{Y}} (z)~\vert~X = \hat{f} (X,z)$ for $z\in \{0,1\}$
+
+Average over $X$ for $\hat{Y}(z)$ unconditional
+
+## Causal modelling 
+
+Assumptions:
+
+- Ignorability $(Y(0), Y(1) \perp Z)~\vert~X$
+- Positivity $0 < \text{P}(Z=1~\vert~X) < 1$ for all $X$
+- $f$ correctly specified 
+
+
+
+## Treatment effect BART
+
+$$
+f(x, z; \beta) = \sum_{k=1}^{K}g(x, z; T_k, M_k)
+$$
+
+- $z$ becomes new variable to include
+- Use standard BART models [@chipman2010]
+
+# `{tidytreatment}`
+
+## BART packages in `R`
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+Modelling:
+
+- `{BART}`
+- `{bcf}`
+- `{dbarts}`
+- `{stan4bart}`
+
+:::
+
+::: {.column width="50%"}
+
+Helper:
+
+- `{bartCause}`
+- `{treatSens}`
+- `{tidytreatment}`
+
+:::
+
+::::
+
+## Tidytreatment motivation
+
+- easily extract 'tidy' output from BART fitted models
+   - manipulation of fitted/predicted values
+   - easy plotting with `{ggplot2}` via `{ggdist}`
+- helper functions for treatment effect estimation
+- based on format from `{tidybayes}`
+- easy interface for Bayesian causal modelling
+
+## 2016 Atlantic Causal Inference competition
+
+```{r setup-data}
+library(aciccomp2016)
+sim <- dgp_2016(input_2016, 20, 1)
+
+data <- with(sim, data.frame(z = z, y = y, input_2016)) %>%
+    mutate(z = factor(z))
+
+```
+
+- Hypothetical observational data
+
+- $X$ = 58 confounders from Collaborative Perinatal Project [@niswander1972women]
+- $Z$ simulated based on $X$
+- $Y$ simulated based on $X,Z$
+
+@dorie2019comp
+
+## Heterogenous treatment effects
+
+```{r setup}
+#| code-fold: true
+#| code-summary: "Show code"
+
+library(dplyr)
+library(ggplot2)
+
+data %>% 
+  filter(x_2 %in% c("C","D", "E"), y < 50, y > - 50) %>%
+ggplot() + 
+  geom_boxplot(aes(y = y, x = z, group = z)) + 
+  facet_wrap(~x_2, labeller = as_labeller( function(x) paste("x_2 =",x) ) ) +
+  scale_x_discrete() +
+  theme_bw(base_size = 20)
+```
+
+
+## `{BART}`: Fitting the model
+
+```{r run-bart}
+#| cache: true
+#| include: false
+library(BART)
+
+bart_model <- wbart(x.train = select(data,-y), 
+                         y.train = pull(data, y),
+                         nskip = 2000, # warmup
+                         ndpost = 500) # total samples
+
+```
+
+```{r show-bart}
+#| echo: true
+#| eval: false
+library(BART)
+
+bart_model <- wbart(x.train = select(data,-y), 
+                         y.train = pull(data, y),
+                         nskip = 2000, # warmup
+                         ndpost = 250) # total samples
+
+```
+
+##  `{tidytreatment}`: 'tidy' fitted values
+
+```{r tidytreatment}
+#| echo: true
+
+library(tidybayes)
+library(tidytreatment)
+
+fitted_posterior_draws <-  fitted_draws(bart_model, 
+                                 value = "fit", 
+                                 include_newdata = FALSE)
+
+```
+
+##  Using `{tidytreatment}`: 'tidy' fitted values
+
+```{r tidytreatment-pdraws}
+#| echo: true
+
+head(fitted_posterior_draws)
+
+```
+
+## Using `{tidytreatment}`: plotting with `{ggdist}` 
+
+```{r tidytreatment-ggdist}
+#| echo: true
+#| code-fold: true
+#| code-summary: "See code"
+#| cache: true
+
+  interest_var <- data %>% 
+  select(z,x_2) %>%
+  mutate(.row = 1:n())
+
+fitted_posterior_draws %>%
+  left_join(interest_var, by = ".row") %>%
+  filter(x_2 %in% c("C","D", "E")) %>% 
+  ggplot() + 
+  stat_halfeye(aes(x = z, y = fit)) + 
+  facet_wrap(~x_2, labeller = as_labeller( function(x) paste("x_2 =",x) ), scales = "free") +
+  xlab("Treatment (z)") + ylab("Posterior predicted value") +
+  theme_bw(base_size = 20) + ggtitle("Effect of treatment with 'x_2' on posterior fitted values")
+
+```
+
+
+## Using `{tidytreatment}`: treatment effects
+
+```{r tidytreatment-treatment}
+#| echo: true
+#| code-fold: true
+#| code-summary: "See code"
+#| cache: true
+
+
+
+
+```
+
+
+# More BART for causal models
+
+## BART with estimated propensity score
+
+- Estimate propensity score for treatment assignment: $\hat{p}$
+- Include 
+
+
+## Common support
+
+@hill2013assessing
+
+## Bayesian causal forests
+
+$$
+f(x, z; \beta) = \sum_{k=1}^{K}g(x; T_k, M_k) + z \sum_{k=1}^{K^\prime}g(x; T_k^\prime, M_k^\prime)
+$$
+
+@hahn2020bayesian
+
+## `{tidytreatment}` compatibility
+
+- **CRAN** version supports `{BART}` and `{bartMachine}`
+- **GitHub** version support `{stan4bart}` and `{bartCause}`
+- Support for `{bcf}` developed but complicated
+
+# Thanks
+
+## Contact
+
+
+- [joshuajbon@gmail.com](mailto:joshuajbon@gmail.com)
+
+- <https://github.com/bonStats/tidytreatment>
+
+- [@bonStats](https://twitter.com/bonStats)
